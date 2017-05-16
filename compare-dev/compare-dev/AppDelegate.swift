@@ -17,6 +17,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // replace the story board by using the following code
+        window = UIWindow(frame: UIScreen.main.bounds)
+        // then make the main screen visible
+        window?.makeKeyAndVisible()
+        
+        //default view controller
+        window?.rootViewController = UINavigationController(rootViewController: ViewController())
         return true
     }
 

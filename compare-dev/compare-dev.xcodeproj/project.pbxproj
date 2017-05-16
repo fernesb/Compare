@@ -15,6 +15,7 @@
 		3D4A33211ECB4292007F4729 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 3D4A331F1ECB4292007F4729 /* LaunchScreen.storyboard */; };
 		3D4A332C1ECB4292007F4729 /* compare_devTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4A332B1ECB4292007F4729 /* compare_devTests.swift */; };
 		3D4A33371ECB4292007F4729 /* compare_devUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4A33361ECB4292007F4729 /* compare_devUITests.swift */; };
+		3D4A33461ECB4608007F4729 /* LoginController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3D4A33451ECB4608007F4729 /* LoginController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +50,7 @@
 		3D4A33321ECB4292007F4729 /* compare-devUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "compare-devUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D4A33361ECB4292007F4729 /* compare_devUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = compare_devUITests.swift; sourceTree = "<group>"; };
 		3D4A33381ECB4292007F4729 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		3D4A33451ECB4608007F4729 /* LoginController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,8 +101,8 @@
 		3D4A33121ECB4292007F4729 /* compare-dev */ = {
 			isa = PBXGroup;
 			children = (
+				3D4A33441ECB454C007F4729 /* Controller */,
 				3D4A33131ECB4292007F4729 /* AppDelegate.swift */,
-				3D4A33151ECB4292007F4729 /* ViewController.swift */,
 				3D4A33171ECB4292007F4729 /* Main.storyboard */,
 				3D4A331D1ECB4292007F4729 /* Assets.xcassets */,
 				3D4A331F1ECB4292007F4729 /* LaunchScreen.storyboard */,
@@ -126,6 +128,15 @@
 				3D4A33381ECB4292007F4729 /* Info.plist */,
 			);
 			path = "compare-devUITests";
+			sourceTree = "<group>";
+		};
+		3D4A33441ECB454C007F4729 /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				3D4A33451ECB4608007F4729 /* LoginController.swift */,
+				3D4A33151ECB4292007F4729 /* ViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -263,6 +274,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3D4A33161ECB4292007F4729 /* ViewController.swift in Sources */,
+				3D4A33461ECB4608007F4729 /* LoginController.swift in Sources */,
 				3D4A33141ECB4292007F4729 /* AppDelegate.swift in Sources */,
 				3D4A331C1ECB4292007F4729 /* compare_dev.xcdatamodeld in Sources */,
 			);
