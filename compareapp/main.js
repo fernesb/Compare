@@ -13,6 +13,7 @@ import {
 
 import {StackNavigator} from 'react-navigation';
 import LoginComponent from './iosApp/Registration/Login'
+import RegisterComponent from './iosApp/Registration/Register'
 
 
 // below is an example of creating object and reuse the object and passing the props
@@ -142,7 +143,7 @@ class HomeScreen extends Component {
     }
 
     static navigationOptions = {
-        title: 'Welcom',
+        title: 'Welcome',
     };
 
 
@@ -165,12 +166,43 @@ class HomeScreen extends Component {
 
 // test out for segment control element
 class SegmentControll extends Component {
-    state = {
-        values: ['One','Two','Three'],
-        value: 'One',
-        selectedIndex: 0,
-        subview: 'just testing',
+    constructor(){
+        super()
+        this.state={
+            values: ['Login','Sign Up'],
+            value: 'Login',
+            selectedIndex: 0,
+            subview: 'just testing',
+            email: '',
+            password: '',
+            confirmedPassword: '',
+        }
+    }
+
+    updateEmail = (text) => {
+        this.setState({email: text })
+    }
+
+    updatePassword = (text) => {
+        this.setState({password: text })
+    }
+
+    confirmPassword = (text) => {
+        this.setState({confirmedPassword: text })
+    }
+
+    login = () => {
+        alert('email: ' + this.state.email + ' password: ' + this.state.password)
+    }
+
+    register = () => {
+        alert('email: ' + this.state.email + ' password: ' + this.state.password + ' confirmPassword: '+ this.state.confirmedPassword)
+    }
+
+    static navigationOptions = {
+        title: 'Welcome',
     };
+
 
     _onChange = (event) => {
         this.setState({
@@ -180,71 +212,66 @@ class SegmentControll extends Component {
 
     _onValueChange = (value) => {
         // if value == One, then we do this following logic 
-        if (value == 'One') {
+        if (value == 'Login') {
             this.setState({
-                value: 'One',
+                value: 'Login',
             });
         }
 
-        if (value == 'Two') {
+        if (value == 'Sign Up') {
             this.setState({
-                value: 'Two',
+                value: 'Sign Up',
             });
-        }
-
-        if (value == 'Three') {
-            this.setState({
-                value: 'Three',
-            });
-        }
-            
+        }   
     };
 
     // this function will be executed every time the pram value is changed
     addSubview(){
-        if (this.state.value == 'One'){
+        if (this.state.value == 'Login'){
             return (
-                <Text style={styles.text} >
-                    subview: 'hahaha1'
-                </Text>
+                <View style={styles.AuthBox}>
+                
+                    <LoginComponent
+                       updateEmail = {this.updateEmail}
+                       updatePassword = {this.updatePassword}
+                       login = {this.login} />  
+                    
+                </View>
             );
         } 
 
-        if (this.state.value == 'Two') {
+        if (this.state.value == 'Sign Up') {
             return (
-                <Text style={styles.text} >
-                    subview: 'hahaha2'
-                </Text>
-            );
-        }
-
-        if (this.state.value == 'Three') {
-            return (
-                <Text style={styles.text} >
-                    subview: 'hahaha3'
-                </Text>
+                <View style={styles.AuthBox}>
+                
+                    <RegisterComponent
+                       updateEmail = {this.updateEmail}
+                       updatePassword = {this.updatePassword}
+                       confirmPassword = {this.confirmPassword}
+                       register = {this.register} />  
+                    
+                </View>
             );
         }
     };
 
     render(){
         return (
-            <View>
-                <Text style={styles.text} >
-                  Value: {this.state.value}
-                </Text>
+            <View style = {styles.parentBox}>
+                
+                <View style = {styles.secondBox}>
+                    
+                    <View style={styles.segmentControll}>
+                        <SegmentedControlIOS
+                            values={this.state.values} 
+                            selectedIndex={this.state.selectedIndex}
+                            onChange={this._onChange}
+                            onValueChange={this._onValueChange} />
+                    </View>
 
-                <Text style={styles.text} >
-                  Index: {this.state.selectedIndex}
-                </Text>
+                    {this.addSubview()}
 
-                <SegmentedControlIOS
-                    values={this.state.values} 
-                    selectedIndex={this.state.selectedIndex}
-                    onChange={this._onChange}
-                    onValueChange={this._onValueChange} />
-
-                {this.addSubview()}
+                </View>
             </View>
         );
     };
@@ -262,9 +289,36 @@ const SimpleApp = StackNavigator({
 
 
 const styles = StyleSheet.create({
-    AuthBox: {
+    // make the main container flexible, this way, the component will take all the available height.
+    // the background
+
+    // alighItems position the child or children in its container, alignment of the children along the second axis,
+    // for now the secondary axis is x axis, the main one is y axis, the default flex is column
+
+    // justifyContent, determins the distribution of children along the primary aixs.
+    parentBox: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: '#bd92d3',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+
+    // below is the second big child under parentBox for registration and login space and segement control
+    secondBox: {
+        height: '60%',
+        width:  '60%',
+        backgroundColor: 'blue',
+    },
+
+    // nested in secondBox, a block just for segment control 
+    segmentControll: {
+        backgroundColor: 'white'
+    },
+
+    //nestd in sechondBox, a block just for Auth forms, same level with segmentControll
+    AuthBox: {
+        flex: 3,
+        backgroundColor: 'yellow',
         alignItems: 'center',
     },
 
