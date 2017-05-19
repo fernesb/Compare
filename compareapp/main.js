@@ -222,14 +222,14 @@ class HomeScreen extends Component {
 
 // nested a tab navigator, this has to go before the StackNavigator 
 const MainScreenNavigator = TabNavigator({
-    // GroupCompare: { screen: GroupComparePage },
+    GroupCompare: { screen: GroupComparePage },
     ProfilePic: { screen: ProfilePicPage },
     Setting: {screen: SettingPage },
 });
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    // HomeScreen: { screen: HomeScreen },
+    HomeScreen: { screen: HomeScreen },
     MainScreen: { screen: MainScreenNavigator },
 });
 
