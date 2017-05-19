@@ -10,36 +10,40 @@ import {
 	TextInput
 } from 'react-native';
 
-export default RegisterComponent = (props) => {
-   return (
-      <View style = {styles.container}>
-         <TextInput
-            style = {styles.input}
-            placeholder = 'Email'
-            autoCapitalize = 'none'
-            onChangeText = {props.updateEmail} />
+export default class RegisterComponent extends React.Component {
+   
+   render(){
+      const {navigate} = this.props.navigate;
+      return (
+         <View style = {styles.container}>
+            <TextInput
+               style = {styles.input}
+               placeholder = 'Email'
+               autoCapitalize = 'none'
+               onChangeText = {this.props.updateEmail} />
 
-         <TextInput
-            style = {styles.input}
-            placeholder = 'Password'
-            autoCapitalize = 'none'
-            onChangeText = {props.updatePassword} />
+            <TextInput
+               style = {styles.input}
+               placeholder = 'Password'
+               autoCapitalize = 'none'
+               onChangeText = {this.props.updatePassword} />
 
-         <TextInput
-            style = {styles.input}
-            placeholder = 'Confrim Password'
-            autoCapitalize = 'none'
-            onChangeText = {props.confirmPassword} />
+            <TextInput
+               style = {styles.input}
+               placeholder = 'Confrim Password'
+               autoCapitalize = 'none'
+               onChangeText = {this.props.confirmPassword} />
 
-         <TouchableHighlight
-            style = {styles.submit}
-            onPress = { () => props.register(props.email, props.password, props.confirmedPassword)}>
-            <Text>
-               Sign Up
-            </Text>
-         </TouchableHighlight>
-      </View>
-   )
+            <TouchableHighlight
+               style = {styles.submit}
+               onPress = { () => this.props.register(this.props.email, this.props.password, this.props.confirmedPassword), ()=>navigate('Chat')}>
+               <Text>
+                  Sign Up
+               </Text>
+            </TouchableHighlight>
+         </View>
+      )
+   }
 }
 
 const styles = StyleSheet.create ({

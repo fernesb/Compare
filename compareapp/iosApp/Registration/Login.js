@@ -9,33 +9,36 @@ import {
 	Button, 
 	TextInput
 } from 'react-native';
-import {StackNavigator} from 'react-navigation';
 
-export default LoginComponent = (props) => {
-   const {navigate} = props.navigate
-   return (
-      <View style = {styles.container}>
-         <TextInput
-            style = {styles.input}
-            placeholder = 'Email'
-            autoCapitalize = 'none'
-            onChangeText = {props.updateEmail} />
+export default class LoginComponent extends React.Component{
 
-         <TextInput
-            style = {styles.input}
-            placeholder = 'Password'
-            autoCapitalize = 'none'
-            onChangeText = {props.updatePassword} />
 
-         <TouchableHighlight
-            style = {styles.submit}
-            onPress = { () => props.login(props.email, props.password), ()=> props.navigate('Chat')}>
-            <Text>
-               Login
-            </Text>
-         </TouchableHighlight>
-      </View>
-   )
+   render() {
+      const {navigate} = this.props.navigate
+      return (
+         <View style = {styles.container}>
+            <TextInput
+               style = {styles.input}
+               placeholder = 'Email'
+               autoCapitalize = 'none'
+               onChangeText = {this.props.updateEmail} />
+
+            <TextInput
+               style = {styles.input}
+               placeholder = 'Password'
+               autoCapitalize = 'none'
+               onChangeText = {this.props.updatePassword} />
+
+            <TouchableHighlight
+               style = {styles.submit}
+               onPress = {()=>navigate('Chat')} >
+               <Text>
+                  Login
+               </Text>
+            </TouchableHighlight>
+         </View>
+      )
+   }
 }
 
 const styles = StyleSheet.create ({

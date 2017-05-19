@@ -11,10 +11,12 @@ import {
     SegmentedControlIOS
 } from 'react-native';
 
-import {StackNavigator} from 'react-navigation';
+import {StackNavigator} from 'react-navigation'
+import { TabNavigator } from 'react-navigation'
 import LoginComponent from './iosApp/Registration/Login'
 import RegisterComponent from './iosApp/Registration/Register'
-import RegisterTest from './iosApp/Registration/RegisterTest'
+
+
 
 
 // below is an example of creating object and reuse the object and passing the props
@@ -66,42 +68,6 @@ class MyScene extends React.Component {
 
 }
 
-class testScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Welcom',
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = {
-            username: 'User Name',
-            password: 'password',
-           
-        };
-    }
-
-
-
-    render() {
-        const {navigate} = this.props.navigation;
-        return (
-
-            <View style={styles.container}>
-                <Text>Login Here</Text>
-                <TextInput
-                    style={styles.registrationFrom}
-                    onChangeText={(text) => this.setState({username: text})} 
-                    value={this.state.username} />
-                <TextInput
-                    style={styles.registrationFrom}
-                    onChangeText={(text) => this.setState({password: text})} 
-                    value={this.state.password} />
-                <Button onPress={()=> navigate('Chat')} title="Log In" />
-            </View>
-        );
-    }
-}
-
 class ChatScreen extends React.Component {
     static navigationOptions = {
         title: 'Chat with Lucy',
@@ -123,6 +89,30 @@ class ChatScreen extends React.Component {
         );
     }
 }
+
+class RecentChatsScreen extends React.Component {
+    render() {
+        return <Text>This is the group compare</Text>
+    }
+}
+
+class AllContactsScreen extends React.Component {
+    render() {
+        return <Text>This the ProfilePic thing</Text>
+    }
+}
+
+class SettingScreen extends React.Component {
+    render() {
+        return <Text>This is setting </Text>
+    }
+}
+
+const MainScreenNavigator = TabNavigator({
+    GroupCompare: { screen: RecentChatsScreen },
+    ProfilePic: { screen: AllContactsScreen },
+    Setting: {screen: SettingScreen },
+});
 
 
 
@@ -214,7 +204,7 @@ class HomeScreen extends Component {
             return (
                 <View style={styles.AuthBox}>
                 
-                    <RegisterTest
+                    <RegisterComponent
                        updateEmail = {this.updateEmail}
                        updatePassword = {this.updatePassword}
                        confirmPassword = {this.confirmPassword}
@@ -225,8 +215,6 @@ class HomeScreen extends Component {
             );
         }
     };
-
-
 
     // this is part rendering the initial page
     render(){
@@ -257,7 +245,7 @@ class HomeScreen extends Component {
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
     Home: { screen: HomeScreen },
-    Chat: { screen: MyScene },
+    Chat: { screen: MainScreenNavigator },
 });
 
 
