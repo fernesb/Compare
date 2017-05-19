@@ -9,8 +9,10 @@ import {
 	Button, 
 	TextInput
 } from 'react-native';
+import {StackNavigator} from 'react-navigation';
 
 export default LoginComponent = (props) => {
+   const {navigate} = props.navigate
    return (
       <View style = {styles.container}>
          <TextInput
@@ -27,7 +29,7 @@ export default LoginComponent = (props) => {
 
          <TouchableHighlight
             style = {styles.submit}
-            onPress = { () => props.login(props.email, props.password)}>
+            onPress = { () => props.login(props.email, props.password), ()=> props.navigate('Chat')}>
             <Text>
                Login
             </Text>

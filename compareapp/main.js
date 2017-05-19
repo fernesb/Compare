@@ -14,6 +14,7 @@ import {
 import {StackNavigator} from 'react-navigation';
 import LoginComponent from './iosApp/Registration/Login'
 import RegisterComponent from './iosApp/Registration/Register'
+import RegisterTest from './iosApp/Registration/RegisterTest'
 
 
 // below is an example of creating object and reuse the object and passing the props
@@ -121,51 +122,9 @@ class ChatScreen extends React.Component {
 }
 
 
-class HomeScreen extends Component {
-    constructor() {
-        super()
-        this.state = {
-            email: '',
-            password: ''
-        }
-    }
-
-    updateEmail = (text) => {
-        this.setState({email: text})
-    }
-
-    updatePassword = (text) => {
-        this.setState({password: text})
-    }
-
-    login = () => {
-        alert('email: ' + this.state.email + ' password: ' + this.state.password)
-    }
-
-    static navigationOptions = {
-        title: 'Welcome',
-    };
-
-
-    render(){
-
-        return(
-            <View style={styles.AuthBox}>
-                
-                <SegmentedControlIOS values={['Sign Up', 'Log In']} selectedIndex={0} style={{width: 200}} />
-                
-                <LoginComponent
-                   updateEmail = {this.updateEmail}
-                   updatePassword = {this.updatePassword}
-                   login = {this.login} />  
-                
-            </View>
-        )
-    }
-}
 
 // test out for segment control element
-class SegmentControll extends Component {
+class HomeScreen extends Component {
     constructor(){
         super()
         this.state={
@@ -179,6 +138,8 @@ class SegmentControll extends Component {
         }
     }
 
+
+    // functions to handle data when users type in information 
     updateEmail = (text) => {
         this.setState({email: text })
     }
@@ -199,11 +160,13 @@ class SegmentControll extends Component {
         alert('email: ' + this.state.email + ' password: ' + this.state.password + ' confirmPassword: '+ this.state.confirmedPassword)
     }
 
+    // setup for navigation bar 
+
     static navigationOptions = {
         title: 'Welcome',
     };
 
-
+    // functions to handle the segment control
     _onChange = (event) => {
         this.setState({
             selectedIndex: event.nativeEvent.selectedSegmentIndex,
@@ -225,6 +188,7 @@ class SegmentControll extends Component {
         }   
     };
 
+    // function to add new subviews on the page to display different components 
     // this function will be executed every time the pram value is changed
     addSubview(){
         if (this.state.value == 'Login'){
@@ -234,7 +198,8 @@ class SegmentControll extends Component {
                     <LoginComponent
                        updateEmail = {this.updateEmail}
                        updatePassword = {this.updatePassword}
-                       login = {this.login} />  
+                       login = {this.login}
+                       navigate = {this.props.navigation} />  
                     
                 </View>
             );
@@ -244,7 +209,7 @@ class SegmentControll extends Component {
             return (
                 <View style={styles.AuthBox}>
                 
-                    <RegisterComponent
+                    <RegisterTest
                        updateEmail = {this.updateEmail}
                        updatePassword = {this.updatePassword}
                        confirmPassword = {this.confirmPassword}
@@ -255,7 +220,11 @@ class SegmentControll extends Component {
         }
     };
 
+
+
+    // this is part rendering the initial page
     render(){
+
         return (
             <View style = {styles.parentBox}>
                 
@@ -281,9 +250,8 @@ class SegmentControll extends Component {
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    Seg : { screen: SegmentControll },
     Home: { screen: HomeScreen },
-    Chat: { screen: ChatScreen },
+    Chat: { screen: MyScene },
 });
 
 
