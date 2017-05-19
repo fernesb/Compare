@@ -31,7 +31,7 @@ export default class LoginComponent extends React.Component{
 
             <TouchableHighlight
                style = {styles.submit}
-               onPress = {()=>navigate('Chat')} >
+               onPress = {()=>navigate('MainScreen')} >
                <Text>
                   Login
                </Text>

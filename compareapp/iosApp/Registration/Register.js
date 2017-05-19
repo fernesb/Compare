@@ -36,7 +36,7 @@ export default class RegisterComponent extends React.Component {
 
             <TouchableHighlight
                style = {styles.submit}
-               onPress = { () => this.props.register(this.props.email, this.props.password, this.props.confirmedPassword), ()=>navigate('Chat')}>
+               onPress = { ()=>navigate('MainScreen')}>
                <Text>
                   Sign Up
                </Text>

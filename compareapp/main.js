@@ -11,10 +11,13 @@ import {
     SegmentedControlIOS
 } from 'react-native';
 
-import {StackNavigator} from 'react-navigation'
-import { TabNavigator } from 'react-navigation'
-import LoginComponent from './iosApp/Registration/Login'
-import RegisterComponent from './iosApp/Registration/Register'
+import {StackNavigator} from 'react-navigation';
+import { TabNavigator } from 'react-navigation';
+import LoginComponent from './iosApp/Registration/Login';
+import RegisterComponent from './iosApp/Registration/Register';
+import SettingPage from './iosApp/Lobby/Settings/SettingPage';
+import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage'
+import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage'
 
 
 
@@ -89,30 +92,6 @@ class ChatScreen extends React.Component {
         );
     }
 }
-
-class RecentChatsScreen extends React.Component {
-    render() {
-        return <Text>This is the group compare</Text>
-    }
-}
-
-class AllContactsScreen extends React.Component {
-    render() {
-        return <Text>This the ProfilePic thing</Text>
-    }
-}
-
-class SettingScreen extends React.Component {
-    render() {
-        return <Text>This is setting </Text>
-    }
-}
-
-const MainScreenNavigator = TabNavigator({
-    GroupCompare: { screen: RecentChatsScreen },
-    ProfilePic: { screen: AllContactsScreen },
-    Setting: {screen: SettingScreen },
-});
 
 
 
@@ -241,15 +220,23 @@ class HomeScreen extends Component {
 
 }
 
+// nested a tab navigator, this has to go before the StackNavigator 
+const MainScreenNavigator = TabNavigator({
+    // GroupCompare: { screen: GroupComparePage },
+    ProfilePic: { screen: ProfilePicPage },
+    Setting: {screen: SettingPage },
+});
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    Home: { screen: HomeScreen },
-    Chat: { screen: MainScreenNavigator },
+    // HomeScreen: { screen: HomeScreen },
+    MainScreen: { screen: MainScreenNavigator },
 });
 
 
 
+
+// In the future can remove the style sheet out side of this file and import it back in
 const styles = StyleSheet.create({
     // make the main container flexible, this way, the component will take all the available height.
     // the background
