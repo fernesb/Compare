@@ -66,38 +66,41 @@ class MyScene extends React.Component {
 
 }
 
-// class HomeScreen extends React.Component {
-//     static navigationOptions = {
-//         title: 'Welcom',
-//     };
+class testScreen extends React.Component {
+    static navigationOptions = {
+        title: 'Welcom',
+    };
 
-//     constructor(props) {
-//         super(props);
-//         this.state = {
-//             username: 'User Name',
-//             password: 'password'
-//         };
-//     }
+    constructor(props) {
+        super(props);
+        this.state = {
+            username: 'User Name',
+            password: 'password',
+           
+        };
+    }
 
-//     render() {
-//         const {navigate} = this.props.navigation;
-//         return (
 
-//             <View style={styles.container}>
-//                 <Text>Login Here</Text>
-//                 <TextInput
-//                     style={styles.registrationFrom}
-//                     onChangeText={(text) => this.setState({username: text})} 
-//                     value={this.state.username} />
-//                 <TextInput
-//                     style={styles.registrationFrom}
-//                     onChangeText={(text) => this.setState({password: text})} 
-//                     value={this.state.password} />
-//                 <Button onPress={()=> navigate('Chat')} title="Log In" />
-//             </View>
-//         );
-//     }
-// }
+
+    render() {
+        const {navigate} = this.props.navigation;
+        return (
+
+            <View style={styles.container}>
+                <Text>Login Here</Text>
+                <TextInput
+                    style={styles.registrationFrom}
+                    onChangeText={(text) => this.setState({username: text})} 
+                    value={this.state.username} />
+                <TextInput
+                    style={styles.registrationFrom}
+                    onChangeText={(text) => this.setState({password: text})} 
+                    value={this.state.password} />
+                <Button onPress={()=> navigate('Chat')} title="Log In" />
+            </View>
+        );
+    }
+}
 
 class ChatScreen extends React.Component {
     static navigationOptions = {
@@ -125,8 +128,8 @@ class ChatScreen extends React.Component {
 
 // test out for segment control element
 class HomeScreen extends Component {
-    constructor(){
-        super()
+    constructor(props){
+        super(props)
         this.state={
             values: ['Login','Sign Up'],
             value: 'Login',
@@ -191,6 +194,8 @@ class HomeScreen extends Component {
     // function to add new subviews on the page to display different components 
     // this function will be executed every time the pram value is changed
     addSubview(){
+
+
         if (this.state.value == 'Login'){
             return (
                 <View style={styles.AuthBox}>
@@ -213,7 +218,8 @@ class HomeScreen extends Component {
                        updateEmail = {this.updateEmail}
                        updatePassword = {this.updatePassword}
                        confirmPassword = {this.confirmPassword}
-                       register = {this.register} />  
+                       register = {this.register}
+                       navigate = {this.props.navigation} />  
                     
                 </View>
             );

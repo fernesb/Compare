@@ -13,6 +13,8 @@ import {
 export default class RegisterTest extends React.Component{
 	
 	render() {
+
+		const {navigate} = this.props.navigate;
 		return (
 			
 			<View style = {styles.container}>
@@ -36,7 +38,7 @@ export default class RegisterTest extends React.Component{
 
 				<TouchableHighlight
 					style = {styles.submit}
-					onPress = { () => this.props.register(this.props.email, this.props.password, this.props.confirmedPassword)}>
+					onPress = { () => this.props.register(this.props.email, this.props.password, this.props.confirmedPassword), ()=>navigate('Chat') }>
 					<Text>
 					   Sign Up
 					</Text>
