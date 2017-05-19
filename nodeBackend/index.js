@@ -1,11 +1,13 @@
 var express = require('express');
 var app = express();
+// include mysql connector here 
 var mysql = require('mysql');
 
 var connection = mysql.createConnection({
 	host: "127.0.0.1",
 	user: "root",
-	password: "6666"
+	password: "6666",
+	database: "compare"
 });
 
 connection.connect(function(err){
@@ -15,6 +17,10 @@ connection.connect(function(err){
 	}
 
 	console.log('Connection to Database is successful!');
+});
+
+connection.query('SELECT * from user', function(err, rows, fields) {
+	console.log('The solution is: ',rows)
 });
 
 app.get('/', function (req, res) {
