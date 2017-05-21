@@ -11,6 +11,7 @@ import {
     SegmentedControlIOS
 } from 'react-native';
 
+import IO from 'socket.io-client/dist/socket.io.js';
 import {StackNavigator} from 'react-navigation';
 import { TabNavigator } from 'react-navigation';
 import LoginComponent from './iosApp/Registration/Login';
@@ -98,7 +99,7 @@ class ChatScreen extends React.Component {
 // test out for segment control element
 class HomeScreen extends Component {
     constructor(props){
-        super(props)
+        super(props);
         this.state={
             values: ['Login','Sign Up'],
             value: 'Login',
@@ -108,6 +109,7 @@ class HomeScreen extends Component {
             password: '',
             confirmedPassword: '',
         }
+        this.socket = IO('http://localhost:3000');
     }
 
 

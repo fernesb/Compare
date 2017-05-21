@@ -3,6 +3,7 @@ var app = express();
 // include mysql connector here 
 var mysql = require('mysql');
 
+// database connection 
 var connection = mysql.createConnection({
 	host: "127.0.0.1",
 	user: "root",
@@ -23,10 +24,19 @@ connection.query('SELECT * from user', function(err, rows, fields) {
 	console.log('The solution is: ',rows)
 });
 
+
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
 
-app.listen(3000, function () {
+// web server set up listening at 3000
+var webServer = app.listen(3000, function () {
   console.log('Example app listening on port 3000!')
+});
+
+// set up socket io 
+var io = require( 'socket.io' ).listen( webServer );
+
+io.on('connection', function(socket){
+	console.log('One client just connected'+socket.id)
 });
