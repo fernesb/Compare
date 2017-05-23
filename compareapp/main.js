@@ -110,8 +110,16 @@ class HomeScreen extends Component {
             confirmedPassword: '',
         }
         this.socket = IO('http://localhost:3000');
+        this.sendMessage();
+        // this.socket.emit('handshake','haha');
+
     }
 
+
+    // test socket.io function
+    sendMessage(){
+        this.socket.emit('handshake','hahaha');
+    };
 
     // functions to handle data when users type in information 
     updateEmail = (text) => {
@@ -168,6 +176,8 @@ class HomeScreen extends Component {
 
 
         if (this.state.value == 'Login'){
+
+
             return (
                 <View style={styles.AuthBox}>
                 

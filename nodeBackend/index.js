@@ -38,5 +38,13 @@ var webServer = app.listen(3000, function () {
 var io = require( 'socket.io' ).listen( webServer );
 
 io.on('connection', function(socket){
-	console.log('One client just connected'+socket.id)
+	console.log('One client just connected: '+ socket.id);
+
+	socket.on( 'disconnect', function() {
+        console.log('Client: '+socket.id+" disconnect!");
+    });
+
+    socket.on('handshake',function(msg){
+    	console.log(msg);
+    });
 });
