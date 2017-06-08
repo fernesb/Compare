@@ -9,7 +9,6 @@ import {
 	Button, 
 	TextInput
 } from 'react-native';
-import IO from 'socket.io-client/dist/socket.io.js';
 
 export default class LoginComponent extends React.Component{
    constructor(props){
@@ -28,6 +27,10 @@ export default class LoginComponent extends React.Component{
       this.setState({password: text })
    }
 
+   // when this component unmounut, remove certain socket listener to prvent multiple triggers and
+   // and kill the old active listeners
+
+
    // event handler for pressing the button
    pressEvent(){
       // using a alert to test email and password update
@@ -45,12 +48,15 @@ export default class LoginComponent extends React.Component{
          
          if(msg.status == false){
             console.warn(msg.msg);
+      
          } else {
             navigate('MainScreen');
          }
       
       });
-      
+
+
+
    }
 
    render() {

@@ -33,17 +33,33 @@ export default class RegisterComponent extends React.Component {
    }
 
    pressEvent(){
-      
-      alert('email: ' + this.state.email + ' password: ' + this.state.password + ' confirmedPassword: '+ this.state.confirmedPassword);
+      const {navigate} = this.props.navigate;
+      // alert('email: ' + this.state.email + ' password: ' + this.state.password + ' confirmedPassword: '+ this.state.confirmedPassword);
+      // if the entered password and the confirmed password don't match
       if( this.state.password != this.state.confirmedPassword) {
          console.warn("Re enter the password");
       } else {
-         const {navigate} = this.props.navigate;
-         navigate('MainScreen');
-      }
-   
+         var registerInfo = {
+            email: this.state.email,
+            password: this.state.password
+         }
+         this.props.socket.emit('register', registerInfo );
 
+         this.props.socket.on('registerStatus',function(msg){
+             
+            if(msg.status == false){
+               console.warn(msg.msg);
+               
+            } else {
+               navigate('MainScreen');
+            }
       
+         });
+
+         // this.props.socket.removeListener('registerStatus');
+        
+      }
+
    }
 
    render(){

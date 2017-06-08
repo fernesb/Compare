@@ -174,15 +174,10 @@ class HomeScreen extends Component {
 
 
         if (this.state.value == 'Login'){
-
-
             return (
                 <View style={styles.AuthBox}>
                 
                     <LoginComponent
-                       updateEmail = {this.updateEmail}
-                       updatePassword = {this.updatePassword}
-                       login = {this.login}
                        navigate = {this.props.navigation} 
                        socket = {this.socket}/>  
                     
@@ -195,11 +190,8 @@ class HomeScreen extends Component {
                 <View style={styles.AuthBox}>
                 
                     <RegisterComponent
-                       updateEmail = {this.updateEmail}
-                       updatePassword = {this.updatePassword}
-                       confirmPassword = {this.confirmPassword}
-                       register = {this.register}
-                       navigate = {this.props.navigation} />  
+                       navigate = {this.props.navigation} 
+                       socket = {this.socket}/>  
                     
                 </View>
             );

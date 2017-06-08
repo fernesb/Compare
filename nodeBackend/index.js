@@ -4,6 +4,22 @@ var app = express();
 var mysql = require('mysql');
 
 
+// database connection 
+var connection = mysql.createConnection({
+	host: "127.0.0.1",
+	user: "root",
+	password: "6666",
+	database: "compare"
+});
+
+connection.connect(function(err){
+	if(err){
+		console.log("Database connection: "+err);
+		return
+	}
+	// console.log('Connection to Database is successful!');
+});
+
 // trying to do the error handling here, but there is still something wrong
 // try{
 // 	connection.connect(function(err){
@@ -50,21 +66,6 @@ io.on('connection', function(socket){
     });
 
     socket.on('login',function(msg){
-    	// database connection 
-		var connection = mysql.createConnection({
-			host: "127.0.0.1",
-			user: "root",
-			password: "6666",
-			database: "compare"
-		});
-
-    	connection.connect(function(err){
-			if(err){
-				console.log("Database connection: "+err);
-				return
-			}
-			// console.log('Connection to Database is successful!');
-		});
 
 		connection.query('SELECT id from user WHERE email = ?',[msg.email], function(error,results,fields){
     		if(error) {
@@ -109,8 +110,41 @@ io.on('connection', function(socket){
 
     	});
 
-		// connection.end();
-    	// console.log(msg.email);
-    	// console.log(msg.password);
-    })
+		
+    }); // close tag for socket("login")
+
+	socket.on("register",function(msg){
+		console.log(msg);
+		connection.query('SELECT * FROM user WHERE email = ?',[msg.email],function(error,results,fields){
+			if(error) {
+				console.log(error);
+			} 
+
+			if(results!=''){
+				console.log("This email has been used already!");
+				var registerAck = {
+					status: false,
+					msg: "This email has been used already!"
+				}
+				socket.emit("registerStatus", registerAck);
+
+			}else{
+				// insert new user here 
+				connection.query('INSERT INTO USER (email, password) VALUES (?,?)', [msg.email, msg.password],function(error, results,fields){
+					if (error){
+						console.log(error);
+					}
+				});
+				var registerAck = {
+					status: true,
+					msg: "Registration successful!"
+				}
+				socket.emit("registerStatus", registerAck);
+
+				console.log("Registration successful!");
+			}
+		});
+	});
+
+
 });
