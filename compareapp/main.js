@@ -19,6 +19,7 @@ import RegisterComponent from './iosApp/Registration/Register';
 import SettingPage from './iosApp/Lobby/Settings/SettingPage';
 import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage'
 import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage'
+import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage'
 
 
 
@@ -227,8 +228,14 @@ class HomeScreen extends Component {
 const MainScreenNavigator = TabNavigator({
     GroupCompare: { screen: GroupComparePage },
     ProfilePic: { screen: ProfilePicPage },
+    Contacts: { screen: ContactsPage },
     Setting: {screen: SettingPage },
 });
+
+MainScreenNavigator.navigationOptions = {
+    headerLeft: null,
+    title: 'Compare',
+}
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
