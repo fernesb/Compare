@@ -110,16 +110,12 @@ class HomeScreen extends Component {
             confirmedPassword: '',
         }
         this.socket = IO('http://localhost:3000');
-        this.sendMessage();
-        // this.socket.emit('handshake','haha');
-
+        
+        this.socket.emit('handshake','IOS: this is a new client and just connected to the server');
     }
 
 
-    // test socket.io function
-    sendMessage(){
-        this.socket.emit('handshake','hahaha');
-    };
+
 
     // functions to handle data when users type in information 
     updateEmail = (text) => {
@@ -136,6 +132,7 @@ class HomeScreen extends Component {
 
     login = () => {
         alert('email: ' + this.state.email + ' password: ' + this.state.password)
+        this.sendMessage();
     }
 
     register = () => {
@@ -150,6 +147,7 @@ class HomeScreen extends Component {
 
     // functions to handle the segment control
     _onChange = (event) => {
+        this.socket.emit('handshake','Test triggers');
         this.setState({
             selectedIndex: event.nativeEvent.selectedSegmentIndex,
         });
@@ -185,7 +183,8 @@ class HomeScreen extends Component {
                        updateEmail = {this.updateEmail}
                        updatePassword = {this.updatePassword}
                        login = {this.login}
-                       navigate = {this.props.navigation} />  
+                       navigate = {this.props.navigation} 
+                       socket = {this.socket}/>  
                     
                 </View>
             );
