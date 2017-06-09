@@ -10,6 +10,7 @@
     "react": "16.0.0-alpha.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-16.0.0.tar.gz",
     "react-native-gifted-chat": "^0.1.4",
+    "react-native-search-box": "0.0.9",
     "react-native-tab-navigator": "^0.3.3",
     "react-native-tableview": "^1.7.0",
     "react-native-tableview-simple": "^0.16.6",
