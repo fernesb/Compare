@@ -239,7 +239,7 @@ MainScreenNavigator.navigationOptions = {
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    HomeScreen: { screen: HomeScreen },
+    // HomeScreen: { screen: HomeScreen },
     MainScreen: { screen: MainScreenNavigator },
 });
 
