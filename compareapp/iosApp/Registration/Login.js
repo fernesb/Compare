@@ -52,11 +52,7 @@ export default class LoginComponent extends React.Component{
          } else {
             navigate('MainScreen');
          }
-      
       });
-
-
-
    }
 
    render() {

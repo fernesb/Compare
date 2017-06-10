@@ -29,7 +29,8 @@ export default class NewFriends extends React.Component{
             text:'',
             searchStatus: false,
             friendEmail:'',
-            friendUserName:''
+            friendUserName:'',
+            user_two_id:'',
         }
         this.socket = IO('http://localhost:3000'); 
     }
@@ -44,10 +45,12 @@ export default class NewFriends extends React.Component{
         // logic handling data sent back from the backend 
         this.socket.on('searchStatus', function(msg){
             if(msg.status == true){
+
                 this.setState({
                     searchStatus: true,
                     friendUserName: msg.content[0].username,
                     friendEmail: msg.content[0].email,
+                    user_two_id: msg.content[0].userId,
                 });
 
             }else{
@@ -77,7 +80,9 @@ export default class NewFriends extends React.Component{
             return (
                 <NewFriendsSearchResult
                     userName ={this.state.friendUserName} 
-                    email = {this.state.friendEmail}/>
+                    email = {this.state.friendEmail}
+                    user_two_id = {this.state.user_two_id}
+                    socket = {this.socket}/>
             )
         }
     }

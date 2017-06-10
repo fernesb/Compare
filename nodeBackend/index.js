@@ -173,4 +173,19 @@ io.on('connection', function(socket){
 			}
 		});
 	});
+
+	socket.on('friendRequest',function(msg){
+		connection.query("INSERT INTO relationship (user_one_id, user_two_id, status, action_user_id) VALUES (?, ?, ?, ?)",
+			[msg.user_one_id, msg.user_two_id, 0, msg.user_one_id],
+			function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				if(results){
+					console.log(results);
+				}
+			}
+		);
+	});
 });
