@@ -154,11 +154,13 @@ io.on('connection', function(socket){
 
 			if(results!=''){
 				console.log('Found user: '+ msg.userName);
-				console.log(JSON.parse(JSON.stringify(results))[0].id);
+
+				var callbackData = JSON.parse(JSON.stringify(results));
+				console.log(callbackData);
 
 				var searchAck = {
 					status: true,
-					content: results,
+					content: callbackData,
 				};
 				socket.emit('searchStatus',searchAck);
 			}else{

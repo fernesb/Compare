@@ -42,7 +42,7 @@ export default class ContactsPage extends React.Component{
     // logic handling data sent back from the backend 
     this.socket.on('searchStatus', function(msg){
       if(msg.status == true){
-        console.warn(msg.content);
+        console.warn(msg.content[0].id);
       }else{
         console.warn(msg.msg);
       }
