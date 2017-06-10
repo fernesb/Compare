@@ -146,5 +146,29 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('searchContacts',function(msg){
+		connection.query('SELECT * FROM user WHERE username=?',[msg.userName], function(error,results,fields){
+			if(error){
+				console.log(error)
+			}
 
+			if(results!=''){
+				console.log('Found user: '+ msg.userName);
+				console.log(JSON.parse(JSON.stringify(results))[0].id);
+
+				var searchAck = {
+					status: true,
+					content: results,
+				};
+				socket.emit('searchStatus',searchAck);
+			}else{
+				console.log('Did not find user: '+ msg.userName);
+				var searchAck = {
+					status: false,
+					msg: 'Did not find this user'
+				};
+				socket.emit('searchStatus',searchAck);
+			}
+		});
+	});
 });

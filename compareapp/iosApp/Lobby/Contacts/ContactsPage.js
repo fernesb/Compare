@@ -26,24 +26,31 @@ export default class ContactsPage extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      userName: "HAHA",
+      userName: "",
       text:''
     }
     this.socket = IO('http://localhost:3000'); 
   }
 
+  //send the search info back to database
   searchUser(){
     var searchObject = {
       userName: this.state.userName
-    }
-    this.socket.emit('handshake',searchObject),
-    alert(this.state.userName),
-    console.warn('This is also a test')
+    };
+
+    this.socket.emit('searchContacts',searchObject);
+    // logic handling data sent back from the backend 
+    this.socket.on('searchStatus', function(msg){
+      if(msg.status == true){
+        console.warn(msg.content);
+      }else{
+        console.warn(msg.msg);
+      }
+    });
   }
 
   onSearch=()=>{
-    // send queries to search for this user
-
+    // event handler for executing search
     return new Promise((resolve,reject) =>{
       
       resolve(
