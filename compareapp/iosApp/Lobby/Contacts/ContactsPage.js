@@ -26,7 +26,7 @@ export default class ContactsPage extends React.Component{
   constructor(props){
     super(props);
     this.state = {
-      userName: "",
+      userId: "",
       text:''
     }
     this.socket = IO('http://localhost:3000'); 
@@ -35,7 +35,7 @@ export default class ContactsPage extends React.Component{
   //send the search info back to database
   searchUser(){
     var searchObject = {
-      userName: this.state.userName
+      userName: this.state.userId
     };
 
     this.socket.emit('searchContacts',searchObject);
@@ -61,7 +61,7 @@ export default class ContactsPage extends React.Component{
   }
 
   onChangeText = (text) => {
-    this.setState({userName:text});
+    this.setState({userId:text});
   }
   
   render() {

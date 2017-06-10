@@ -20,7 +20,7 @@ import SettingPage from './iosApp/Lobby/Settings/SettingPage';
 import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage'
 import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage'
 import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage'
-
+import TabViewExample from './iosApp/Lobby/lobby'
 
 
 
@@ -240,7 +240,8 @@ MainScreenNavigator.navigationOptions = {
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
     // HomeScreen: { screen: HomeScreen },
-    MainScreen: { screen: MainScreenNavigator },
+    // MainScreen: { screen: MainScreenNavigator },
+    MainScreen: {screen: TabViewExample }
 });
 
 

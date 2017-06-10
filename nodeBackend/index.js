@@ -147,7 +147,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('searchContacts',function(msg){
-		connection.query('SELECT * FROM user WHERE username=?',[msg.userName], function(error,results,fields){
+		connection.query('SELECT * FROM user WHERE userId=?',[msg.userName], function(error,results,fields){
 			if(error){
 				console.log(error)
 			}

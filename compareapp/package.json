@@ -12,6 +12,7 @@
     "react-native-gifted-chat": "^0.1.4",
     "react-native-search-box": "0.0.9",
     "react-native-tab-navigator": "^0.3.3",
+    "react-native-tab-view": "0.0.66",
     "react-native-tableview": "^1.7.0",
     "react-native-tableview-simple": "^0.16.6",
     "react-native-vector-icons": "^4.2.0",
