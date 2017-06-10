@@ -29,7 +29,7 @@ export default class CurrentContactsPage extends React.Component{
       userId: "",
       text:''
     }
-    this.socket = IO('http://localhost:3000'); 
+    // this.socket = IO('http://localhost:3000'); 
   }
 
   //send the search info back to database

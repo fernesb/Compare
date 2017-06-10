@@ -19,7 +19,7 @@ const styles = StyleSheet.create({
 
 export default class TabViewExample extends Component {
   state = {
-    index: 0,
+    index: 2,
     routes: [
       { key: '1', title: 'Friends' },
       { key: '2', title: 'Group Chat' },
