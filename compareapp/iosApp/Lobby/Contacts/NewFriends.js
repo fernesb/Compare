@@ -32,7 +32,7 @@ export default class NewFriends extends React.Component{
             friendUserName:'',
             user_two_id:'',
         }
-        this.socket = IO('http://localhost:3000'); 
+        // this.socket = IO('http://localhost:3000'); 
     }
 
     //send the search info back to database

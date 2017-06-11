@@ -72,7 +72,7 @@ export default class TopBarIconExample extends Component {
   };
 
   state = {
-    index: 2,
+    index: 0,
     routes: [
       { key: '1', title: 'Group Compare' },
       { key: '2', title: 'Profile Pic' },

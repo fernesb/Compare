@@ -17,9 +17,11 @@ import {
 
 import IO from 'socket.io-client/dist/socket.io.js';
 import { GiftedChat } from 'react-native-gifted-chat';
-import Row from './Row'
+import DynamicList from './DynamicList'
 import Search from 'react-native-search-box';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import {List, ListItem} from 'react-native-elements';
+
 const {width, height} = Dimensions.get('window')
 
 export default class CurrentContactsPage extends React.Component{
@@ -27,12 +29,46 @@ export default class CurrentContactsPage extends React.Component{
     super(props);
     this.state = {
       userId: "",
-      text:''
+      text:'',
+      friendsList: []
     }
-    // this.socket = IO('http://localhost:3000'); 
+    this.socket = IO('http://localhost:3000'); 
+    //emit socket info to query friends list
+    // hardcoded current user identity UserId: william-ysy (in database)
+    
   }
 
-  //send the search info back to database
+  componentDidMount() {
+    this.socket.emit('friendList','william-ysy');
+
+    this.socket.on('friendListAck',function(msg){
+      this.setState({friendsList:msg});
+      // alert(this.state.friendsList);
+    }.bind(this));
+  }
+
+  list = [
+    {
+      name: 'Amy Farha',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+      subtitle: 'Vice President'
+    },
+    {
+      name: 'Chris Jackson',
+      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+      subtitle: 'Vice Chairman'
+    }
+  ]
+
+ 
+  renderFriendList(msg){
+    msg.map((item)=>(
+      this.state.friendsList.push({name: item.user_two_id})
+    ));
+  };
+
+
+  //search the existing users
   searchUser(){
     var searchObject = {
       userName: this.state.userId
@@ -76,34 +112,18 @@ export default class CurrentContactsPage extends React.Component{
 
         <View style={styles.contacts}>
 
-          <FlatList
-            data={[
-              {key: 'Devin'},
-              {key: 'Jackson'},
-              {key: 'James'},
-              {key: 'Joel'},
-              {key: 'John'},
-              {key: 'Jillian'},
-              {key: 'Jimmy'},
-              {key: 'Julie'},
-              {key: 'Juliee'},
-              {key: 'Julieee'},
-              {key: 'Julieeee'},
-              {key: 'Juli'},
-              {key: 'Jule'},
-              {key: 'Juie'},
-              {key: 'Jlie'},
-              {key: 'ulie'},
-              {key: 'aJulie'},
-              {key: 'bJulie'},
-              {key: 'cJulie'},
-              {key: 'vJulie'},
-              {key: 'bcJulie'},
-              {key: 'nJulie'},
-              {key: 'mJulie'},
-            ]}
-            renderItem={({item}) => <Text style={styles.item}>{item.key}</Text>}
-            removeClippedSubviews = {false}/>
+
+          <List containerStyle={{marginBottom: 20}}>
+            {
+              this.state.friendsList.map((l, i) => (
+                <ListItem
+                  roundAvatar
+                  key={i}
+                  avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
+                  title={l.user_two_id}/>
+              ))
+            }
+          </List>
         </View>
       </View>
     );

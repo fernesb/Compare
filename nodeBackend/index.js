@@ -188,4 +188,20 @@ io.on('connection', function(socket){
 			}
 		);
 	});
+
+	socket.on('friendList',function(msg){
+		connection.query('SELECT * FROM relationship WHERE (user_one_id = ? or user_two_id =? ) AND status = 1',
+		[msg, msg],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+
+			if(results!=''){
+				var callbackData = JSON.parse(JSON.stringify(results));
+				console.log(callbackData);
+				socket.emit('friendListAck',callbackData);
+			}
+		});
+	});
 });
