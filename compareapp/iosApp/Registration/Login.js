@@ -35,8 +35,8 @@ export default class LoginComponent extends React.Component{
    pressEvent(){
       // using a alert to test email and password update
       // alert('email: ' + this.state.email + ' password: ' + this.state.password)
-      const {navigate} = this.props.navigate
-
+      const {navigate} = this.props.navigate;
+      const socketParam = this.props.socket;
       var loginInfo = {
          email: this.state.email,
          password: this.state.password
@@ -50,7 +50,7 @@ export default class LoginComponent extends React.Component{
             console.warn(msg.msg);
       
          } else {
-            navigate('MainScreen');
+            navigate('MainScreen',{socket: socketParam});
          }
       });
    }

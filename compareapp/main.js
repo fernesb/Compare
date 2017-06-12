@@ -17,11 +17,11 @@ import { TabNavigator } from 'react-navigation';
 import LoginComponent from './iosApp/Registration/Login';
 import RegisterComponent from './iosApp/Registration/Register';
 import SettingPage from './iosApp/Lobby/Settings/SettingPage';
-import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage'
-import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage'
-import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage'
-import TabViewExample from './iosApp/Lobby/lobby'
-
+import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage';
+import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage';
+import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage';
+import TopBarIconExample from './iosApp/Lobby/lobby';
+import FriendsProfilePage from './iosApp/Lobby/Contacts/FriendsProfile';
 
 
 // below is an example of creating object and reuse the object and passing the props
@@ -239,9 +239,9 @@ MainScreenNavigator.navigationOptions = {
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    // HomeScreen: { screen: HomeScreen },
-    // MainScreen: { screen: MainScreenNavigator },
-    MainScreen: {screen: TabViewExample }
+    HomeScreen: { screen: HomeScreen },
+    MainScreen: { screen: TopBarIconExample },
+    FriendsProfileScreen: { screen: FriendsProfilePage }
 });
 
 

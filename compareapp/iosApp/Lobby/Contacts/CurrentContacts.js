@@ -13,6 +13,7 @@ import {
     FlatList,
     Dimensions,
     TouchableWithoutFeedback,
+    ScrollView
 } from 'react-native';
 
 import IO from 'socket.io-client/dist/socket.io.js';
@@ -24,6 +25,8 @@ import {List, ListItem} from 'react-native-elements';
 
 const {width, height} = Dimensions.get('window')
 
+import FriendsProfile from './FriendsProfile'
+
 export default class CurrentContactsPage extends React.Component{
   constructor(props){
     super(props);
@@ -32,41 +35,27 @@ export default class CurrentContactsPage extends React.Component{
       text:'',
       friendsList: []
     }
-    this.socket = IO('http://localhost:3000'); 
+    // this.socket = IO('http://localhost:3000'); 
     //emit socket info to query friends list
     // hardcoded current user identity UserId: william-ysy (in database)
     
   }
 
   componentDidMount() {
-    this.socket.emit('friendList','william-ysy');
+    alert(this.props.socket);
+    this.props.socket.emit('friendList','william-ysy');
 
-    this.socket.on('friendListAck',function(msg){
+    this.props.socket.on('friendListAck',function(msg){
       this.setState({friendsList:msg});
       // alert(this.state.friendsList);
     }.bind(this));
-  }
+  };
 
-  list = [
-    {
-      name: 'Amy Farha',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-      subtitle: 'Vice President'
-    },
-    {
-      name: 'Chris Jackson',
-      avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-      subtitle: 'Vice Chairman'
-    }
-  ]
-
- 
   renderFriendList(msg){
     msg.map((item)=>(
       this.state.friendsList.push({name: item.user_two_id})
     ));
   };
-
 
   //search the existing users
   searchUser(){
@@ -74,9 +63,9 @@ export default class CurrentContactsPage extends React.Component{
       userName: this.state.userId
     };
 
-    this.socket.emit('searchContacts',searchObject);
+    this.props.socket.emit('searchContacts',searchObject);
     // logic handling data sent back from the backend 
-    this.socket.on('searchStatus', function(msg){
+    this.props.socket.on('searchStatus', function(msg){
       if(msg.status == true){
         console.warn(msg.content[0].id);
       }else{
@@ -99,10 +88,15 @@ export default class CurrentContactsPage extends React.Component{
   onChangeText = (text) => {
     this.setState({userId:text});
   }
+
+  userPageNavigate(){
+    const {navigate} = this.props.navigate;
+    navigate('FriendsProfileScreen',{user: 'Lucy'});
+  }
   
   render() {
     return (
-      <View style={{flex: 1}}>  
+      <ScrollView style={{flex: 1}}>  
         <View style={styles.searchBar}>
           <Search
             onSearch = {this.onSearch}
@@ -111,26 +105,24 @@ export default class CurrentContactsPage extends React.Component{
         </View>
 
         <View style={styles.contacts}>
-
-
           <List containerStyle={{marginBottom: 20}}>
             {
               this.state.friendsList.map((l, i) => (
-                <ListItem
-                  roundAvatar
-                  key={i}
-                  avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
-                  title={l.user_two_id}/>
+                  <ListItem
+                    roundAvatar
+                    key={i}
+                    avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
+                    title={l.user_two_id}
+                    button onPress={()=>{this.userPageNavigate()}}/>
               ))
             }
           </List>
         </View>
-      </View>
+      </ScrollView>
     );
   }
 
 }
-
 
 const styles = StyleSheet.create({
   searchBar: {

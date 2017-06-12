@@ -27,6 +27,7 @@ export default class TabViewExample extends Component {
     ],
   };
 
+
   _handleChangeTab = (index) => {
     this.setState({ index });
   };
@@ -38,7 +39,9 @@ export default class TabViewExample extends Component {
   _renderScene = ({ route }) => {
     switch (route.key) {
     case '1':
-      return <CurrentContactsPage />;
+      return <CurrentContactsPage 
+              navigate = {this.props.navigate}
+              socket = {this.props.socket}/>;
     case '2':
       return <View style={[ styles.page, { backgroundColor: '#673ab7' } ]} />;
     case '3':

@@ -18,6 +18,7 @@ import ContactsPage from './Contacts/ContactsPage';
 import GroupComparePage from './GroupCompare/GroupComparePage';
 import ProfilePicPage from './ProfilePic/ProfilePicPage';
 import SettingPage from './Settings/SettingPage';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -64,6 +65,10 @@ const styles = StyleSheet.create({
 
 export default class TopBarIconExample extends Component {
 
+  static navigationOptions = {
+    title: 'Compare',
+  };
+
   static title = 'Bottom bar with indicator';
   static appbarElevation = 4;
 
@@ -72,7 +77,7 @@ export default class TopBarIconExample extends Component {
   };
 
   state = {
-    index: 0,
+    index: 2,
     routes: [
       { key: '1', title: 'Group Compare' },
       { key: '2', title: 'Profile Pic' },
@@ -120,7 +125,9 @@ export default class TopBarIconExample extends Component {
       case '2':
         return <ProfilePicPage />;
       case '3':
-        return <ContactsPage/>
+        return <ContactsPage 
+                navigate = {this.props.navigation}
+                socket = {this.props.navigation.state.params.socket}/>
       case '4':
         return <SettingPage/>
       default:
