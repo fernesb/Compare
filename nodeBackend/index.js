@@ -299,8 +299,8 @@ io.on('connection', function(socket){
 				connection.query('UPDATE profilePicPosts SET votes=votes+1 WHERE id=?',
 				[msg.photoId],
 				function(error,results,fields){
-					connection.query('SELECT * FROM profilePicPosts WHERE id=?',
-					[msg.photoId],function(error,results,fields){
+					connection.query('SELECT * FROM profilePicPosts WHERE postBy=?',
+					[msg.user_two_id],function(error,results,fields){
 						var callbackData = JSON.parse(JSON.stringify(results));
 						socket.emit('voteAck', callbackData);
 					});
