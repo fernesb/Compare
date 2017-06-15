@@ -83,7 +83,8 @@ io.on('connection', function(socket){
     		}else{
     			
     			connection.query('SELECT * FROM user WHERE email = ? and password = ? ', [msg.email, msg.password],function(error,results,fields){
-   		
+   					var callbackData = JSON.parse(JSON.stringify(results));
+   					console.log(callbackData[0].userId);
 		    		if(results == ''){
 		    			console.log("Password is not correct");
 		    			var loginAck = {
@@ -98,7 +99,8 @@ io.on('connection', function(socket){
 		    			var loginAck = {
 		    				status: true,
 		    				msg: "User just logged in",
-		    				userName: "testUser"
+		    				userId: callbackData[0].userId,
+		    				userName: callbackData[0].username
 		    			}
 		    			socket.emit('loginStatus', loginAck);
 		    		}
@@ -190,6 +192,8 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('friendList',function(msg){
+		var friendList = [];
+
 		connection.query('SELECT * FROM relationship WHERE (user_one_id = ? or user_two_id =? ) AND status = 1',
 		[msg, msg],
 		function(error,results,fields){
@@ -199,9 +203,112 @@ io.on('connection', function(socket){
 
 			if(results!=''){
 				var callbackData = JSON.parse(JSON.stringify(results));
-				console.log(callbackData);
-				socket.emit('friendListAck',callbackData);
+				//process the callback data, msg here is the logged in user
+				for(i=0; i < callbackData.length; i++){
+					if(callbackData[i].user_one_id == msg){
+						var friendInfo = {
+							friendId : callbackData[i].user_two_id
+						}
+						friendList.push(friendInfo);
+					}else{
+						var friendsInfo = {
+							friendId : callbackData[i].user_one_id
+						}
+						friendList.push(friendInfo);
+					}
+				}
+
+				console.log(friendList);
+				socket.emit('friendListAck',friendList);
 			}
 		});
 	});
+
+	socket.on('profilePicsRequest', function(msg){
+		connection.query('SELECT * FROM profilePicPosts WHERE postBy = ?',
+		[msg],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+
+			if(results!=''){
+				var callbackData = JSON.parse(JSON.stringify(results));
+				socket.emit('profilePicsRequestAck', callbackData);
+				console.log(callbackData);
+			}else{
+				console.log('no posts yet');
+			}
+		});
+	});
+
+	socket.on('voteStatus',function(msg){
+		console.log(msg);
+		connection.query('SELECT status FROM voteStatus WHERE user_one_id =? AND user_two_id =?',
+		[msg.user_one_id,msg.user_two_id],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+
+			console.log(results);
+			// check if exists a cell between the two users
+			// false means not voted yet
+			if(results==''){
+				socket.emit('voteStatusAck',false);
+				connection.query('INSERT INTO voteStatus (user_one_id, user_two_id, status) VALUES (?, ?, ?)',
+				[msg.user_one_id, msg.user_two_id, 0],
+				function(error,results,fields){
+					if(error){
+						console.log(error)
+					}
+
+					if(results!=''){
+						console.log('created entry successfully');
+					}
+				});
+			}else{
+				var callbackData = JSON.parse(JSON.stringify(results));
+				console.log(callbackData);
+				if(callbackData[0].status == 1){
+					console.log('status is 1');
+					socket.emit('voteStatusAck',true);
+				}else{
+					console.log('status is 0');
+					socket.emit('voteStatusAck',false);
+				}	
+			}
+		});
+	});
+
+	socket.on('vote',function(msg){
+		connection.query('SELECT id FROM voteStatus WHERE user_one_id =? AND user_two_id =?',
+		[msg.user_one_id,msg.user_two_id],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+			console.log('found row')
+			var callbackData = JSON.parse(JSON.stringify(results));
+			connection.query('UPDATE voteStatus SET status=? WHERE id =?',[1, callbackData[0].id],function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				//here increment the vote counts for that specific picture
+				connection.query('UPDATE profilePicPosts SET votes=votes+1 WHERE id=?',
+				[msg.photoId],
+				function(error,results,fields){
+					connection.query('SELECT * FROM profilePicPosts WHERE id=?',
+					[msg.photoId],function(error,results,fields){
+						var callbackData = JSON.parse(JSON.stringify(results));
+						socket.emit('voteAck', callbackData);
+					});
+					
+				});
+
+			});
+		});
+	});
+
 });

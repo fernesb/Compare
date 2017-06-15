@@ -17,41 +17,85 @@ import {
     Image
 } from 'react-native';
 
+import FriendsProfilePicObjects from './FriendsProfilePicObjects';
+
 export default class FriendsProfile extends React.Component {
     constructor(props){
         super(props);
         this.state = {
-            user: this.props.navigation.state.params.user
+            friendId: this.props.navigation.state.params.friendId, // logged in user id 
+            profilePicObjects:[],
+            voteStatus:false
         }
+ 
     };
+
+    componentWillMount(){
+        this.socket = this.props.navigation.state.params.socket;
+        this.socket.emit('profilePicsRequest', this.state.friendId);
+        this.socket.on('profilePicsRequestAck',function(msg){
+            this.setState({profilePicObjects: msg});
+        }.bind(this));
+
+        var voteStatusInfo = {
+            user_one_id :'william-ysy',
+            user_two_id :this.state.friendId
+        };
+
+        this.socket.emit('voteStatus',voteStatusInfo);
+        this.socket.on('voteStatusAck',function(msg){
+            if(msg==true){
+                this.setState({voteStatus: true});
+            }
+        }.bind(this));
+    }   
 
     static navigationOptions = {
         title: 'Profile',
     };
 
+    addSubview(){
+        if(this.state.voteStatus == false){
+            return(<Text>Not voted yet</Text>);
+        }else {
+            return(<Text>Voted already</Text>);   
+        }
+    }
+
+    pressEvent(photoId){
+        this.setState({voteStatus:true});
+
+        var voteInfo = {
+            user_one_id :'william-ysy',
+            user_two_id :this.state.friendId,
+            photoId: photoId
+        };
+
+        this.socket.emit('vote',voteInfo);
+        this.socket.on('voteAck',function(msg){
+            this.setState({profilePicObjects: msg});
+        }.bind(this));
+    }
+
     render(){
         return (
+            
             <View style={styles.parentBox}>
-                <View style={styles.profilePicBox1}>
-                    <Image 
-                        style = {{width: '80%', height: '80%'}}
-                        source = {require('../ProfilePic/TestPics/audiA8.jpg') } />
-                    <Text>Votes: {this.state.user} </Text>
-                </View>
-                
-                <View style={styles.profilePicBox2}>
-                    <Image 
-                        style = {{width: '80%', height: '80%'}}
-                        source = {require('../ProfilePic/TestPics/bmw5.jpg') } />
-                    <Text>Votes: </Text>
-                </View>
-
-                <View style={styles.profilePicBox3}>
-                    <Image 
-                        style = {{width: '80%', height: '80%'}}
-                        source = {require('../ProfilePic/TestPics/benzSclass.jpg') } />
-                    <Text>Votes: </Text>
-                </View>
+            {this.addSubview()}
+                {
+                    this.state.profilePicObjects.map((item,index)=>(
+                    
+                        <View key={index} style = {styles.profilePicBox1}>
+                            <TouchableHighlight 
+                                onPress={()=>{this.pressEvent(item.id)}}>
+                                <Image
+                                    style = {{width: '80%', height: '80%'}}
+                                    source = {require('../ProfilePic/TestPics/audiA8.jpg')}/>
+                            </TouchableHighlight>
+                            <Text>Votes: {item.votes}</Text>
+                        </View>
+                    ))
+                }
             </View>
         );
     };

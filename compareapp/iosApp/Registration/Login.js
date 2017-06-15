@@ -50,7 +50,12 @@ export default class LoginComponent extends React.Component{
             console.warn(msg.msg);
       
          } else {
-            navigate('MainScreen',{socket: socketParam});
+            navigate('MainScreen',
+               {  socket: socketParam,
+                  userId: msg.userId,
+                  userName: msg.userName
+               }
+            );
          }
       });
    }

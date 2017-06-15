@@ -42,7 +42,6 @@ export default class CurrentContactsPage extends React.Component{
   }
 
   componentDidMount() {
-    alert(this.props.socket);
     this.props.socket.emit('friendList','william-ysy');
 
     this.props.socket.on('friendListAck',function(msg){
@@ -51,11 +50,7 @@ export default class CurrentContactsPage extends React.Component{
     }.bind(this));
   };
 
-  renderFriendList(msg){
-    msg.map((item)=>(
-      this.state.friendsList.push({name: item.user_two_id})
-    ));
-  };
+
 
   //search the existing users
   searchUser(){
@@ -89,9 +84,15 @@ export default class CurrentContactsPage extends React.Component{
     this.setState({userId:text});
   }
 
-  userPageNavigate(){
+  userPageNavigate(friendId){
     const {navigate} = this.props.navigate;
-    navigate('FriendsProfileScreen',{user: 'Lucy'});
+    const socketParam = this.props.socket;
+    navigate('FriendsProfileScreen',
+      { 
+        socket: socketParam,
+        friendId: friendId
+      }
+    );
   }
   
   render() {
@@ -112,8 +113,8 @@ export default class CurrentContactsPage extends React.Component{
                     roundAvatar
                     key={i}
                     avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
-                    title={l.user_two_id}
-                    button onPress={()=>{this.userPageNavigate()}}/>
+                    title={l.friendId}
+                    button onPress={()=>{this.userPageNavigate(l.friendId)}}/>
               ))
             }
           </List>

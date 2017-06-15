@@ -127,7 +127,9 @@ export default class TopBarIconExample extends Component {
       case '3':
         return <ContactsPage 
                 navigate = {this.props.navigation}
-                socket = {this.props.navigation.state.params.socket}/>
+                socket = {this.props.navigation.state.params.socket}
+                userId = {this.props.navigation.state.params.userId}
+                userName ={this.props.navigation.state.params.userName}/>
       case '4':
         return <SettingPage/>
       default:
