@@ -105,4 +105,4 @@ const styles = StyleSheet.create ({
       backgroundColor: 'silver',
       padding: 10
    }
-})
+});

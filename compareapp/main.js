@@ -6,15 +6,22 @@ import {
     View, 
     NavigatorIOS, 
     TouchableHighlight, 
-    Button, 
     TextInput,
     SegmentedControlIOS
 } from 'react-native';
 
 import IO from 'socket.io-client/dist/socket.io.js';
 import {StackNavigator} from 'react-navigation';
-import { TabNavigator } from 'react-navigation';
+import {TabNavigator} from 'react-navigation';
+import {Button, Avatar} from 'react-native-elements';
+import { FormLabel, FormInput, FormValidationMessage } from 'react-native-elements'
+
 import LoginComponent from './iosApp/Registration/Login';
+import SignUpOne from './iosApp/Registration/SignUpOne';
+import SignUpTwo from './iosApp/Registration/SignUpTwo';
+import SignUpThree from './iosApp/Registration/SignUpThree';
+import SignUpFour from './iosApp/Registration/SignUpFour';
+
 import RegisterComponent from './iosApp/Registration/Register';
 import SettingPage from './iosApp/Lobby/Settings/SettingPage';
 import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage';
@@ -22,79 +29,6 @@ import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage';
 import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage';
 import TopBarIconExample from './iosApp/Lobby/lobby';
 import FriendsProfilePage from './iosApp/Lobby/Contacts/FriendsProfile';
-
-
-// below is an example of creating object and reuse the object and passing the props
-class Greeting extends React.Component {
-  render(){
-    return (
-      <Text> Hello {this.props.name}, how are you!</Text>
-    )
-  }
-}
-
-
-class App extends React.Component {
-  render() {
-    return (
-      <View style={styles.container}>
-        <Text>Fernesssss!</Text>
-        <Greeting name='Shuyang'/>
-        <Greeting name='Mateen'/>
-        <Greeting name='YY'/>
-      </View>
-    );
-  }
-}
-// ////////////////////////////////////
-
-class MyScene extends React.Component {
-    static PropTypes = {
-        title: PropTypes.string.isRequired,
-        navigator: PropTypes.object.isRequired,
-    }
-
-    _onForward = () => {
-        this.props.navigator.push({
-          title: 'Scene ' + nextIndex,
-        });
-    }
-
-    render() {
-        return (
-            <View style={styles.container}>
-                <Text>Current Scene: { this.props.title }</Text>
-                <TouchableHighlight onPress={this._onForward}>
-                  <Text>Tap me to load the next scene</Text>
-                </TouchableHighlight>
-            </View>
-        )
-      }
-
-}
-
-class ChatScreen extends React.Component {
-    static navigationOptions = {
-        title: 'Chat with Lucy',
-    };
-
-    constructor(props) {
-        super(props);
-        this.state = { text: 'Useless Placeholder' };
-    }
-
-    render() {
-
-        return (
-
-          <View>
-            <Text>Chat with Lucy</Text>
-
-          </View>
-        );
-    }
-}
-
 
 
 // test out for segment control element
@@ -224,27 +158,67 @@ class HomeScreen extends Component {
 
 }
 
-// nested a tab navigator, this has to go before the StackNavigator 
-const MainScreenNavigator = TabNavigator({
-    GroupCompare: { screen: GroupComparePage },
-    ProfilePic: { screen: ProfilePicPage },
-    Contacts: { screen: ContactsPage },
-    Setting: {screen: SettingPage },
-});
 
-MainScreenNavigator.navigationOptions = {
-    headerLeft: null,
-    title: 'Compare',
-}
+class WelcomePage extends React.Component{
+    static navigationOptions = {
+        header: null
+    };
+
+    pressEvent(){
+        const {navigate} = this.props.navigation;
+        navigate('SignUpOne');
+    };
+
+    pressToNext(){
+        
+    };
+
+    render(){
+        return(
+            <View style={styles.parentBox}>
+                <View style={styles.body}>
+
+                    <View style={styles.logo}>
+                        <Text style={styles.appTitle}>Research</Text>
+                    </View>
+
+                    <View style={styles.loginForm}>
+                        <FormLabel>Email:</FormLabel>
+                        <FormInput/>
+                        <FormLabel>password:</FormLabel>
+                        <FormInput/>
+                        <Button 
+                            icon={{ name: 'done' }}
+                            title="Login"
+                            buttonStyle={{ marginTop: 15, backgroundColor: 'purple' }}
+                            onPress={()=>{this.pressToNext()}}/>
+                        <FormValidationMessage></FormValidationMessage>
+                    </View>
+
+                </View>
+
+                <View style={styles.footer}>
+                    <Button 
+                        title='Dont have an account yet? Sign Up!'
+                        backgroundColor='#397af8'
+                        onPress = {()=>{this.pressEvent()}}/>
+                </View>
+            </View>
+        );
+    };
+};
+
 
 // this is like the stack for each screen
 const SimpleApp = StackNavigator({
-    HomeScreen: { screen: HomeScreen },
+    HomeScreen: { screen: WelcomePage },
+    SignUpOne:  { screen: SignUpOne },
+    SignUpTwo:  { screen: SignUpTwo},
+    SignUpThree:  { screen: SignUpThree},
+    SignUpFour: {screen: SignUpFour},
     MainScreen: { screen: TopBarIconExample },
     FriendsProfileScreen: { screen: FriendsProfilePage }
 });
-
-
 
 
 // In the future can remove the style sheet out side of this file and import it back in
@@ -258,11 +232,35 @@ const styles = StyleSheet.create({
     // justifyContent, determins the distribution of children along the primary aixs.
     parentBox: {
         flex: 1,
-        backgroundColor: '#bd92d3',
         alignItems: 'center',
         justifyContent: 'center'
     },
+ 
+    body:{
+        width: '100%',
+        height:'100%',
+        flex: 11,
+    },
+    footer: {
+        flex:1,
+        width:'100%',
+        height:'100%',
+    },
 
+    loginForm:{
+        flex:2,
+    },
+
+    logo:{
+        flex:1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    appTitle:{
+        fontFamily:'Zapfino',
+        fontSize: 30,
+    },
     // below is the second big child under parentBox for registration and login space and segement control
     secondBox: {
         height: '60%',
