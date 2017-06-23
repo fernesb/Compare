@@ -2,6 +2,8 @@ var express = require('express');
 var app = express();
 // include mysql connector here 
 var mysql = require('mysql');
+var jwt = require('jsonwebtoken');
+
 
 
 // database connection 
@@ -52,8 +54,11 @@ var webServer = app.listen(3000, function () {
 
 // set up socket io 
 var io = require( 'socket.io' ).listen( webServer );
+var connectedClients ={};
 
 io.on('connection', function(socket){
+	// pushing new socket in to connected clients array
+	connectedClients[socket.id] = socket;
 	console.log('One client just connected: '+ socket.id);
 
 	socket.on( 'disconnect', function() {
@@ -63,6 +68,177 @@ io.on('connection', function(socket){
     socket.on('handshake',function(msg){
     	console.log(msg);
     	socket.emit('test','This is a fake test');
+    });
+
+    socket.on('checkToken',function(msg){
+    	console.log("The new token: "+msg);
+    	try{
+	    	var decoded = jwt.verify(msg, 'fernesyucompare');
+	    	console.log("The new decoded: "+decoded);
+
+	    	connection.query('SELECT * FROM loginSession WHERE userId=? AND token=?',
+	    	[decoded, msg],
+	    	function(error,results,fields){
+	    		if(error){
+	    			console.log(error);
+	    		}
+	    		console.log(results);
+
+	    		if(results!=''){
+	    			socket.emit('TokenFeedback',msg);
+	    		}else{
+	    			console.log('Need to login first');
+	    		}
+	    	});
+    	} catch(err){
+    		console.log('Potential attack: '+err);
+    	}
+
+    });
+
+
+    socket.on('userLogin',function(msg){
+    	// generate tokes first
+    	var token = jwt.sign(msg.userId, 'fernesyucompare');
+
+    	// check if the user has logged in already
+    	connection.query('SELECT * FROM loginSession WHERE token=? AND userId=?',
+		[token, msg.userId],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+
+			var callbackData = JSON.parse(JSON.stringify(results));
+			if(results!=''){
+				if(callbackData[0].socketId!= socket.id){
+					console.log("User Logged in somewhere else already");
+				}else{
+					console.log("You are in!");
+				}
+			}else{
+				// if user not logged in yet, then check credentials first
+
+				connection.query('SELECT id from user WHERE userId = ?',
+				[msg.userId], 
+				function(error,results,fields){
+		    		if(error) {
+		    			console.log("Error checking if the user exists: "+error)
+		    		}
+
+		    		if(results==''){
+		    			console.log("User does not exist");
+		    			var loginAck = {
+		    				status: false,
+		    				msg: "User does not exist",
+		    				userName:''
+		    			}
+		    			socket.emit('loginStatus', loginAck);
+		    		}else{
+		    			
+		    			connection.query('SELECT * FROM user WHERE userId = ? and password = ? ', 
+		    			[msg.userId, msg.password],
+		    			function(error,results,fields){
+
+		   					var callbackData = JSON.parse(JSON.stringify(results));
+		   					console.log(callbackData[0].userId);
+				    		if(results == ''){
+				    			console.log("Password is not correct");
+				    			var loginAck = {
+				    				status: false,
+				    				msg: "Password is not correct",
+				    				userName: ''
+				    			}
+		    					socket.emit('loginStatus', loginAck);
+
+				    		} else {
+				    			// user login credentials are good, then store the token in login session
+				    			connection.query('INSERT INTO loginSession (token, userId, socketId) VALUES (?,?,?)',
+								[token, msg.userId, socket.id],
+								function(error, results,fields){
+									if (error){
+										console.log(error);
+									}
+									console.log("just created the login session");
+
+								});
+
+				    			console.log('User just logged in');
+				    			var loginAck = {
+				    				status: true,
+				    				msg: "User just logged in",
+				    				userId: callbackData[0].userId,
+				    				userName: callbackData[0].username,
+				    				token: token,
+				    			}
+				    			socket.emit('loginStatus', loginAck);
+				    		}
+
+				    		if(error) console.log(error);
+				    	});
+
+		    		}
+    			});
+
+			}
+		});
+    });
+
+
+
+
+    socket.on('newLogin',function(msg){
+		//generate token
+		console.log("UserId: "+msg);
+		var token = jwt.sign(msg, 'fernesyucompare');
+		//check if the login session existed already
+		connection.query('SELECT * FROM loginSession WHERE token=? AND userId=?',
+		[token, msg],
+		function(error,results,fields){
+			if(error){
+				console.log(error);
+			}
+
+			var callbackData = JSON.parse(JSON.stringify(results));
+			if(results!=''){
+				if(callbackData[0].socketId!= socket.id){
+					console.log("User Logged in somewhere else already");
+				}else{
+					console.log("You are in!");
+				}
+			}else{
+				
+				connection.query('INSERT INTO loginSession (token, userId, socketId) VALUES (?,?,?)',
+				[token, msg, socket.id],
+				function(error, results,fields){
+					if (error){
+						console.log(error);
+					}
+					console.log("just created the login session");
+
+				});
+
+				var object = {
+					token: token,
+					socketId: socket.id,
+				}
+				socket.emit('newLoginAck',object);
+
+			}
+		});
+
+    });
+
+    socket.on('logout',function(msg){
+    	connection.query('DELETE FROM loginSession WHERE token=?',
+    	[msg],
+    	function(error,results,fields){
+    		if(error){
+    			console.log(error);
+    		}
+
+    		console.log("logged out successfully");
+    	});
     });
 
     socket.on('login',function(msg){
@@ -95,6 +271,7 @@ io.on('connection', function(socket){
     					socket.emit('loginStatus', loginAck);
 
 		    		} else {
+
 		    			console.log('User just logged in');
 		    			var loginAck = {
 		    				status: true,

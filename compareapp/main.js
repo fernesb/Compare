@@ -7,7 +7,8 @@ import {
     NavigatorIOS, 
     TouchableHighlight, 
     TextInput,
-    SegmentedControlIOS
+    SegmentedControlIOS,
+    AsyncStorage
 } from 'react-native';
 
 import IO from 'socket.io-client/dist/socket.io.js';
@@ -28,6 +29,8 @@ import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage';
 import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage';
 import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage';
 import TopBarIconExample from './iosApp/Lobby/lobby';
+import TestLobby from './iosApp/Lobby/testLobby';
+
 import FriendsProfilePage from './iosApp/Lobby/Contacts/FriendsProfile';
 
 
@@ -48,8 +51,6 @@ class HomeScreen extends Component {
         
         this.socket.emit('handshake','IOS: this is a new client and just connected to the server');
     }
-
-
 
 
     // functions to handle data when users type in information 
@@ -160,17 +161,52 @@ class HomeScreen extends Component {
 
 
 class WelcomePage extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            userId:'',
+            password:'',
+        }
+        this.socket = IO('http://9f6f2eef.ngrok.io',{jsonp: false},{transports: ['websocket']});
+    }
     static navigationOptions = {
         header: null
     };
 
     pressEvent(){
-        const {navigate} = this.props.navigation;
-        navigate('SignUpOne');
+        // const {navigate} = this.props.navigation;
+        // navigate('SignUpOne');
+        // value = AsyncStorage.getItem('token');
+        
     };
 
-    pressToNext(){
+    pressToLogin(){
+        console.log(this.state.userId+this.state.password);
+        const {navigate} = this.props.navigation;
+
+        var loginInfo = {
+            userId: this.state.userId,
+            password: this.state.password
+        }; 
+
+        this.socket.emit('userLogin',loginInfo);
         
+        this.socket.on('loginStatus', function(msg){
+            if(msg.status==true){
+                navigate('MainScreen',{
+                    socket: this.socket,
+                    token: msg.token
+                });
+            }
+        }.bind(this));
+    };
+
+    updatePassword=(text)=>{
+        this.setState({password:text});
+    };
+
+    updateUserId=(text)=>{
+        this.setState({userId:text});
     };
 
     render(){
@@ -183,15 +219,17 @@ class WelcomePage extends React.Component{
                     </View>
 
                     <View style={styles.loginForm}>
-                        <FormLabel>Email:</FormLabel>
-                        <FormInput/>
+                        <FormLabel>UserId:</FormLabel>
+                        <FormInput
+                            onChangeText={this.updateUserId}/>
                         <FormLabel>password:</FormLabel>
-                        <FormInput/>
+                        <FormInput
+                            onChangeText={this.updatePassword}/>
                         <Button 
                             icon={{ name: 'done' }}
                             title="Login"
                             buttonStyle={{ marginTop: 15, backgroundColor: 'purple' }}
-                            onPress={()=>{this.pressToNext()}}/>
+                            onPress={()=>{this.pressToLogin()}}/>
                         <FormValidationMessage></FormValidationMessage>
                     </View>
 
@@ -216,7 +254,8 @@ const SimpleApp = StackNavigator({
     SignUpTwo:  { screen: SignUpTwo},
     SignUpThree:  { screen: SignUpThree},
     SignUpFour: {screen: SignUpFour},
-    MainScreen: { screen: TopBarIconExample },
+    MainScreen : {screen: TestLobby},
+    // MainScreen: { screen: TopBarIconExample },
     FriendsProfileScreen: { screen: FriendsProfilePage }
 });
 
