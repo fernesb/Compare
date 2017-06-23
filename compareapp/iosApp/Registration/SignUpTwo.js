@@ -12,7 +12,18 @@ import {
 import {Button, Avatar, SocialIcon, FormLabel, FormInput, FormValidationMessage} from 'react-native-elements';
 
 export default class SignUpTwo extends React.Component {
-	
+	constructor(props){
+      super(props);
+      this.state = {
+        email: this.props.navigation.state.params.email,
+        password: this.props.navigation.state.params.password,
+        userId:'',
+      }
+      
+      this.socket = this.props.navigation.state.params.socket;
+      
+    };
+
 	static navigationOptions = {
         header: null
     };
@@ -23,22 +34,34 @@ export default class SignUpTwo extends React.Component {
     };
 
     onPress(){
+    	alert(this.state.email+this.state.password+this.state.userId);
+
     	const {navigate} = this.props.navigation;
-    	navigate('SignUpThree');
+    	navigate('SignUpThree',{
+    		socket: this.socket,
+    		email: this.state.email,
+    		password: this.state.password,
+    		userId: this.state.userId
+    	});
+    };
+
+    updateUserId=(text)=>{
+      	this.setState({userId:text});
     };
 
 	render(){
 		return(
 			<View style={styles.parent}>
 				<View style={styles.title}>
-					<Text style={styles.appTitle}>Create Username</Text>
+					<Text style={styles.appTitle}>Create UserId</Text>
 					<Text style={{fontFamily: 'Zapfino', fontSize: 15, width:'80%'}}>Use our suggested username or you can come up your own name!</Text>
 				</View>
 
 				<View style={styles.usernameForm}>
 					<FormLabel
 						labelStyle={{marginTop: 60}}>Username:</FormLabel>
-                    <FormInput/>
+                    <FormInput
+                     	onChangeText={this.updateUserId}/>
                     <Button 
                         icon={{ name: 'done' }}
                         title="Next"

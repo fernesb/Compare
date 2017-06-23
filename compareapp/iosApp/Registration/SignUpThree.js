@@ -18,6 +18,19 @@ import {  	Button,
 			Icon } from 'react-native-elements';
 
 export default class SignUpThree extends React.Component {
+	constructor(props){
+      	super(props);
+
+      	this.state = {
+			email: this.props.navigation.state.params.email,
+			password: this.props.navigation.state.params.password,
+			userId: this.props.navigation.state.params.userId,
+
+		}
+      
+      	this.socket = this.props.navigation.state.params.socket;  
+    };
+
 	static navigationOptions = {
         header: null
     };
@@ -29,7 +42,12 @@ export default class SignUpThree extends React.Component {
 
     pressToNext(){
     	const {navigate} = this.props.navigation;
-    	navigate('SignUpFour');
+    	navigate('SignUpFour', {
+    		socket: this.socket,
+    		email: this.state.email,
+    		password: this.state.password,
+    		userId: this.state.userId
+    	});
     };
 
 

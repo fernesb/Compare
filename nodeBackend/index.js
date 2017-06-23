@@ -96,7 +96,7 @@ io.on('connection', function(socket){
 
     });
 
-
+    // latest login function
     socket.on('userLogin',function(msg){
     	// generate tokes first
     	var token = jwt.sign(msg.userId, 'fernesyucompare');
@@ -184,8 +184,45 @@ io.on('connection', function(socket){
 		});
     });
 
+	// latest sign up function
+	socket.on('userSignUp',function(msg){
+		// generate token
+		var token = jwt.sign(msg.userId, 'fernesyucompare');
 
+		connection.query('INSERT INTO USER (email, userId, fullName, password, shortInfo) VALUES (?,?,?,?,?)', 
+		[msg.email, msg.userId, msg.fullname, msg.password, msg.shortinfo],
+		function(error, results,fields){
+			
+			if (error){
+				console.log(error);
+			}else{
 
+				var registerAck = {
+					status: true,
+					msg: "Registration successful!",
+					token: token
+				}
+
+				socket.emit("SignUpStatus", registerAck);
+
+				// created a loggin session
+				connection.query('INSERT INTO loginSession (token, userId, socketId) VALUES (?,?,?)',
+				[token, msg.userId, socket.id],
+				function(error, results,fields){
+					if (error){
+						console.log(error);
+					}
+					console.log("just created the login session");
+
+				});
+
+				console.log("Registration successful!");
+
+			}
+		});
+
+		
+	}); 
 
     socket.on('newLogin',function(msg){
 		//generate token
