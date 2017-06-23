@@ -36,6 +36,7 @@ export default class SignUpThree extends React.Component {
     };
 
     pressEvent(){
+    	this.socket.disconnect();
     	const {navigate} = this.props.navigation;
     	navigate('HomeScreen');
     };

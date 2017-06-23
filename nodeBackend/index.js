@@ -141,7 +141,7 @@ io.on('connection', function(socket){
 		    			function(error,results,fields){
 
 		   					var callbackData = JSON.parse(JSON.stringify(results));
-		   					console.log(callbackData[0].userId);
+		   					
 				    		if(results == ''){
 				    			console.log("Password is not correct");
 				    			var loginAck = {

@@ -193,13 +193,20 @@ class WelcomePage extends React.Component{
         this.socket.emit('userLogin',loginInfo);
         
         this.socket.on('loginStatus', function(msg){
-            if(msg.status==true){
+            if(msg.status == true){
+
                 navigate('MainScreen',{
                     socket: this.socket,
                     token: msg.token
                 });
+            }else{
+                console.warn("no");
             }
+            // this prevents the duplicates
+            this.socket.removeListener('loginStatus');
         }.bind(this));
+
+
     };
 
     updatePassword=(text)=>{

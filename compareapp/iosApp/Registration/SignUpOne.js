@@ -28,8 +28,10 @@ export default class SignUpOne extends React.Component {
     };
 
     pressEvent(){
-    	const {navigate} = this.props.navigation;
-    	navigate('HomeScreen');
+    	
+      this.socket.disconnect();
+      const {navigate} = this.props.navigation;
+      navigate('HomeScreen');
     };
 
     pressToNext(){
