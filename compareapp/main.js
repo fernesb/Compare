@@ -28,7 +28,7 @@ import SettingPage from './iosApp/Lobby/Settings/SettingPage';
 import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage';
 import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage';
 import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage';
-import TopBarIconExample from './iosApp/Lobby/lobby';
+import Lobby from './iosApp/Lobby/lobby';
 import TestLobby from './iosApp/Lobby/testLobby';
 
 import FriendsProfilePage from './iosApp/Lobby/Contacts/FriendsProfile';
@@ -262,8 +262,8 @@ const SimpleApp = StackNavigator({
     SignUpTwo:  { screen: SignUpTwo},
     SignUpThree:  { screen: SignUpThree},
     SignUpFour: {screen: SignUpFour},
-    MainScreen : {screen: TestLobby},
-    // MainScreen: { screen: TopBarIconExample },
+    // MainScreen : {screen: TestLobby},
+    MainScreen: { screen: Lobby },
     FriendsProfileScreen: { screen: FriendsProfilePage }
 });
 

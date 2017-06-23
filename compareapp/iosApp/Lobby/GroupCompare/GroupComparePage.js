@@ -15,9 +15,18 @@ import { GiftedChat } from 'react-native-gifted-chat';
 export default class GroupComparePage extends React.Component{
 	constructor(props) {
     super(props);
-    this.state = {messages: []};
+    this.state = {
+      messages: [],
+      token: this.props.token
+    };
+
     this.onSend = this.onSend.bind(this);
+    this.socket = this.props.socket;
+    this.socket.on('chatMessage', function(msg){
+      this.onReceivedMessage(msg);
+    }.bind(this));
   }
+
   componentWillMount() {
     this.setState({
       messages: [
@@ -33,23 +42,35 @@ export default class GroupComparePage extends React.Component{
         },
       ],
     });
-  }
+  };
+
   onSend(messages = []) {
+    this.socket.emit('chatMessage', messages[0]);
+    this._storeMessages(messages);
+  };
+
+  onReceivedMessage(messages){
+    this._storeMessages(messages);
+  }
+
+  //helper function
+  _storeMessages(messages){
     this.setState((previousState) => {
       return {
         messages: GiftedChat.append(previousState.messages, messages),
       };
     });
-  }
+  };
+
   render() {
     return (
       <GiftedChat
         messages={this.state.messages}
         onSend={this.onSend}
         user={{
-          _id: 1,
-        }}
-      />
+          _id: this.state.token,
+          avatar: 'https://facebook.github.io/react/img/logo_og.png'
+        }} />
     );
   }
 }

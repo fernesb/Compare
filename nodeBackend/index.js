@@ -22,27 +22,6 @@ connection.connect(function(err){
 	// console.log('Connection to Database is successful!');
 });
 
-// trying to do the error handling here, but there is still something wrong
-// try{
-// 	connection.connect(function(err){
-// 		if(err){
-// 			throw err;
-// 			return;
-// 		} else {
-// 			console.log('Connection to Database is successful!');
-// 		}
-// 	});
-// } catch(e) {
-// 	console.log("Connection failed: "+e);
-// }
-
-
-
-// connection.query('SELECT * from user', function(err, rows, fields) {
-// 	console.log('The solution is: ',rows)
-// });
-/////////////////////////////////////////////////////////////////////////////////
-
 app.get('/', function (req, res) {
   res.send('Hello World!')
 });
@@ -59,10 +38,16 @@ var connectedClients ={};
 io.on('connection', function(socket){
 	// pushing new socket in to connected clients array
 	connectedClients[socket.id] = socket;
-	console.log('One client just connected: '+ socket.id);
+	console.log('One client just connected: '+ socket.id); 
+
+	// Objects.keys() return the keys in this object in an array form;
+	console.log("Total connected user numbers: "+Object.keys(connectedClients).length+" : "+Object.keys(connectedClients) );
 
 	socket.on( 'disconnect', function() {
         console.log('Client: '+socket.id+" disconnect!");
+        // then remove that socket from the array
+        delete connectedClients[socket.id];
+        console.log("Total connected user numbers: "+Object.keys(connectedClients).length+" : "+Object.keys(connectedClients) );
     });
 
     socket.on('handshake',function(msg){
@@ -523,6 +508,10 @@ io.on('connection', function(socket){
 
 			});
 		});
+	});
+
+	socket.on('chatMessage',function(msg){
+		socket.broadcast.emit('chatMessage', msg);
 	});
 
 });

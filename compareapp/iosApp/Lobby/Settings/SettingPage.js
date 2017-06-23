@@ -12,9 +12,33 @@ import {
 } from 'react-native';
 
 export default class SettingPage extends React.Component{
+    constructor(props){
+        super(props);
+        this.state = {
+            token: this.props.token,
+        }
+        
+        this.socket = this.props.socket;
+        
+    };
+
+    logout(){
+        
+        this.socket.emit('logout', this.state.token);
+        this.socket.disconnect();
+    
+        const {navigate} = this.props.navigate;
+        navigate('HomeScreen');
+    };
+
     render(){
-        return (
-            <Text>THIS IS SETTING PAGE</Text>
-        )
+        return(
+            <View>
+                <Text>{this.state.token}</Text>
+                <Button
+                    title="log out"
+                    onPress={()=>{this.logout()}} />
+            </View>
+        );
     }
 }
