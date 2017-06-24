@@ -23,6 +23,14 @@ export default class TestLobby extends React.Component {
 		
 	};
 
+	componentWillMount(){
+		// AsyncStorage.getItem('token').then((value)=>{
+		// 	console.log(value);
+		// 	this.socket.emit('checkToken', value);
+		// 	this.setState({token:value});
+		// });	
+	};
+
 	logout(){
 		
 		this.socket.emit('logout', this.state.token);
