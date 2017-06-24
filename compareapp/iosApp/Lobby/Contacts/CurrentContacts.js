@@ -33,7 +33,8 @@ export default class CurrentContactsPage extends React.Component{
     this.state = {
       userId: "",
       text:'',
-      friendsList: []
+      friendsList: [],
+      token: this.props.token
     }
     // this.socket = IO('http://localhost:3000'); 
     //emit socket info to query friends list
@@ -42,8 +43,9 @@ export default class CurrentContactsPage extends React.Component{
   }
 
   componentDidMount() {
-    this.props.socket.emit('friendList','william-ysy');
-
+    this.props.socket.emit('friendList',this.state.token);
+    // alert(this.state.token);
+    
     this.props.socket.on('friendListAck',function(msg){
       this.setState({friendsList:msg});
       // alert(this.state.friendsList);

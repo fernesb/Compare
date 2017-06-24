@@ -392,9 +392,18 @@ io.on('connection', function(socket){
 
 	socket.on('friendList',function(msg){
 		var friendList = [];
+		var decoded;
+		// verify token first
+		try {
+		  decoded = jwt.verify(msg, 'fernesyucompare');
+		  console.log(decoded);
+		} catch(err) {
+		  console.log(err);
+		  return;
+		}
 
 		connection.query('SELECT * FROM relationship WHERE (user_one_id = ? or user_two_id =? ) AND status = 1',
-		[msg, msg],
+		[decoded, decoded],
 		function(error,results,fields){
 			if(error){
 				console.log(error);
@@ -402,14 +411,20 @@ io.on('connection', function(socket){
 
 			if(results!=''){
 				var callbackData = JSON.parse(JSON.stringify(results));
+				console.log(callbackData);
 				//process the callback data, msg here is the logged in user
 				for(i=0; i < callbackData.length; i++){
-					if(callbackData[i].user_one_id == msg){
+
+					console.log(callbackData[i]);
+					if(callbackData[i].user_one_id == decoded){
+						console.log('found it');
 						var friendInfo = {
 							friendId : callbackData[i].user_two_id
 						}
 						friendList.push(friendInfo);
 					}else{
+						console.log('found it here');
+
 						var friendsInfo = {
 							friendId : callbackData[i].user_one_id
 						}
@@ -417,6 +432,10 @@ io.on('connection', function(socket){
 					}
 				}
 
+				console.log(friendList);
+				socket.emit('friendListAck',friendList);
+			}else{
+				//no friends yet
 				console.log(friendList);
 				socket.emit('friendListAck',friendList);
 			}

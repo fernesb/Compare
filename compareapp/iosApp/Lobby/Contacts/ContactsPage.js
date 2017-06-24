@@ -42,8 +42,7 @@ export default class TabViewExample extends Component {
       return <CurrentContactsPage 
               navigate = {this.props.navigate}
               socket = {this.props.socket}
-              userId = {this.props.userId}
-              userName = {this.props.userName}/>;
+              token = {this.props.token} />;
     case '2':
       return <View style={[ styles.page, { backgroundColor: '#673ab7' } ]} />;
     case '3':

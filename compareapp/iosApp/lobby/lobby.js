@@ -96,6 +96,7 @@ export default class Lobby extends Component {
       case '3':
         return <ContactsPage 
                   navigate = {this.props.navigation}
+                  token = {this.state.token}
                   // userId = {this.props.navigation.state.params.userId}
                   // userName ={this.props.navigation.state.params.userName}
                   socket = {this.socket} />
