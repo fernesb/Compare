@@ -21,7 +21,8 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Search from 'react-native-search-box';
 import NewFriendsSearchResult from './NewFriendsSearchResult'
 
-export default class NewFriends extends React.Component{
+export default class NewFriendsSearchPage extends React.Component {
+    
     constructor(props){
         super(props);
         this.state = {
@@ -31,13 +32,12 @@ export default class NewFriends extends React.Component{
             friendEmail:'',
             friendUserName:'',
             user_two_id:'',
-            token: this.props.token
+            token: this.props.navigation.state.params.token
         }
-        this.socket = this.props.socket;
+        this.socket = this.props.navigation.state.params.socket
     };
-
-    //modify this to do a fuzzu search in current contacts
     
+    //send the search info back to database
     searchUser(){
         var searchObject = {
             token: this.state.token,
@@ -76,28 +76,12 @@ export default class NewFriends extends React.Component{
         this.setState({userId:text});
     };
 
-    // navigate to next page 
-    switchPage(){
-        const {navigate} = this.props.navigate;
-        navigate('NewFriendsSearchPage',{
-            socket: this.socket,
-            token: this.state.token
-        });
-    }
-
-    onFocus=()=>{
-        
-        return new Promise((resolve,reject)=>{
-            resolve(
-                this.switchPage()
-            );
-        });
-    }
 
     // user_two_id is the userId of the friend being searched
     addSubview(){
+        
         if(this.state.searchStatus == false){
-            return (<Text>Sir</Text>)
+            return (<Text>Sir</Text>);
         }else{
             return (
                 <NewFriendsSearchResult
@@ -106,7 +90,7 @@ export default class NewFriends extends React.Component{
                     user_two_id = {this.state.user_two_id}
                     socket = {this.socket}
                     token ={this.state.token} />
-            )
+            );
         }
     }
 
@@ -126,7 +110,7 @@ export default class NewFriends extends React.Component{
             </View>
         )
     }
-}
+};
 
 const styles = StyleSheet.create({
     searchBar:{
@@ -137,3 +121,4 @@ const styles = StyleSheet.create({
         backgroundColor:'yellow',
     }
 });
+

@@ -46,7 +46,10 @@ export default class TabViewExample extends Component {
     case '2':
       return <View style={[ styles.page, { backgroundColor: '#673ab7' } ]} />;
     case '3':
-      return <NewFriends/>
+      return <NewFriends
+              navigate = {this.props.navigate}
+              socket = {this.props.socket}
+              token = {this.props.token} />
     default:
       return null;
     }

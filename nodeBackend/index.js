@@ -348,46 +348,73 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('searchContacts',function(msg){
-		connection.query('SELECT * FROM user WHERE userId=?',[msg.userName], function(error,results,fields){
-			if(error){
-				console.log(error)
-			}
+		// verify token first
 
-			if(results!=''){
-				console.log('Found user: '+ msg.userName);
+		try {
 
-				var callbackData = JSON.parse(JSON.stringify(results));
-				console.log(callbackData);
+		  	var decoded = jwt.verify(msg.token, 'fernesyucompare');
+		  	console.log(decoded);
 
-				var searchAck = {
-					status: true,
-					content: callbackData,
-				};
-				socket.emit('searchStatus',searchAck);
-			}else{
-				console.log('Did not find user: '+ msg.userName);
-				var searchAck = {
-					status: false,
-					msg: 'Did not find this user'
-				};
-				socket.emit('searchStatus',searchAck);
-			}
-		});
+		  	connection.query('SELECT * FROM user WHERE userId=?',
+			[msg.userName], 
+			function(error,results,fields){
+			
+				if(error){
+					console.log(error)
+				}
+
+				if(results!=''){
+					console.log('Found user: '+ msg.userName);
+
+					var callbackData = JSON.parse(JSON.stringify(results));
+					console.log(callbackData);
+
+					var searchAck = {
+						status: true,
+						content: callbackData,
+					};
+					socket.emit('searchStatus',searchAck);
+				}else{
+					console.log('Did not find user: '+ msg.userName);
+					var searchAck = {
+						status: false,
+						msg: 'Did not find this user'
+					};
+					socket.emit('searchStatus',searchAck);
+				}
+			});
+
+		} catch(err) {
+		  	console.log(err);
+		  	return;
+		}
 	});
 
 	socket.on('friendRequest',function(msg){
-		connection.query("INSERT INTO relationship (user_one_id, user_two_id, status, action_user_id) VALUES (?, ?, ?, ?)",
-			[msg.user_one_id, msg.user_two_id, 0, msg.user_one_id],
+
+		try {
+			var decoded = jwt.verify(msg.token, 'fernesyucompare');
+			
+			// if the verification pass then,  
+			connection.query("INSERT INTO relationship (user_one_id, user_two_id, status, action_user_id) VALUES (?, ?, ?, ?)",
+			[decoded, msg.user_two_id, 0, decoded],
 			function(error,results,fields){
 				if(error){
 					console.log(error);
 				}
 
 				if(results){
+					// Insert works then sent back ack
+					socket.emit('friendRequestAck', true);
 					console.log(results);
 				}
-			}
-		);
+			});
+
+		} catch(err) {
+			console.log(err);
+		}
+
+		
 	});
 
 	socket.on('friendList',function(msg){

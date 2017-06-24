@@ -19,8 +19,9 @@ export default class NewFriendsSearchResult extends React.Component{
     constructor(props){
         super(props);
         this.state = {
-            user_one_id:'william-ysy',
+            token: this.props.token,
             user_two_id: this.props.user_two_id,
+            requestSent: false,
         }   
     };
 
@@ -29,30 +30,53 @@ export default class NewFriendsSearchResult extends React.Component{
         alert(this.state.user_two_id);
 
         var friendRequestObject = {
-            user_one_id: this.state.user_one_id,
+            token: this.state.token,
             user_two_id: this.state.user_two_id
         }
         this.props.socket.emit('friendRequest',friendRequestObject);
+        
+        this.props.socket.on('friendRequestAck',function(msg){
+            // if request sent successfully
+            if(msg == true){
+                this.setState({requestSent: true});
+            }
+        }.bind(this));
+    };
+
+    addSubView(){
+        if(this.state.requestSent == false){
+            return(
+                <View>
+                    <View style = {styles.profilePicBox}>  
+                    </View>  
+                    
+                    <View style = {styles.infoBox}>
+                        <Text>Name: {this.props.userName}</Text>
+                        <Text>Email: {this.props.email}</Text>
+                        
+                        <TouchableHighlight
+                           style = {styles.submit}
+                           onPress = {this.pressEvent.bind(this) } >
+                           <Text>Send Friend Request</Text>
+                        </TouchableHighlight>
+                    </View>
+                </View>
+            );
+        }else{
+
+            return(
+                <View>
+                    <Text>Friend Request just sent!</Text>
+                </View>
+            );
+        }
     };
 
     render(){
 
         return (
             <View style = {styles.parentBox}>
-
-                <View style = {styles.profilePicBox}>  
-                </View>  
-                
-                <View style = {styles.infoBox}>
-                    <Text>Name: {this.props.userName}</Text>
-                    <Text>Email: {this.props.email}</Text>
-                    
-                    <TouchableHighlight
-                       style = {styles.submit}
-                       onPress = {this.pressEvent.bind(this) } >
-                       <Text>Send Friend Request</Text>
-                    </TouchableHighlight>
-                </View>
+                {this.addSubView()}
             </View>
         );
     };
