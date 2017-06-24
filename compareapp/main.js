@@ -167,7 +167,7 @@ class WelcomePage extends React.Component{
             userId:'',
             password:'',
         }
-        this.socket = IO('http://9f6f2eef.ngrok.io',{jsonp: false});
+        this.socket = IO('http://e8394368.ngrok.io',{jsonp: false});
         // this.socket = IO('http://localhost:3000',{jsonp: false});
     }
     static navigationOptions = {

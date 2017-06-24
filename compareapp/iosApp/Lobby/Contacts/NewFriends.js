@@ -20,6 +20,7 @@ import { GiftedChat } from 'react-native-gifted-chat';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Search from 'react-native-search-box';
 import NewFriendsSearchResult from './NewFriendsSearchResult'
+import {List, ListItem} from 'react-native-elements';
 
 export default class NewFriends extends React.Component{
     constructor(props){
@@ -31,13 +32,25 @@ export default class NewFriends extends React.Component{
             friendEmail:'',
             friendUserName:'',
             user_two_id:'',
-            token: this.props.token
+            token: this.props.token,
+            requestSentFriendsList: [],
         }
         this.socket = this.props.socket;
+        this.props.socket.emit('requestSentFriendsList',this.state.token);
+        
+        // keep real-time updating the request sent list
+        this.props.socket.on('requestSentFriendsListAck',function(msg){
+          this.setState({requestSentFriendsList:msg});
+          // alert(this.state.friendsList);
+        }.bind(this));
     };
 
     //modify this to do a fuzzu search in current contacts
-    
+    // componentDidMount() {
+
+    // };
+
+
     searchUser(){
         var searchObject = {
             token: this.state.token,
@@ -120,8 +133,19 @@ export default class NewFriends extends React.Component{
                         onFocus = {this.onFocus}/>
                 </View>
 
-                <View style={styles.searchResult}>
-                    {this.addSubview()}
+                <View style={styles.contacts}>
+                    <List containerStyle={{marginBottom: 20}}>
+                        {
+                          this.state.requestSentFriendsList.map((l, i) => (
+                              <ListItem
+                                roundAvatar
+                                key={i}
+                                avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
+                                title={l.friendId}
+                                button onPress={()=>{this.userPageNavigate(l.friendId)}}/>
+                          ))
+                        }
+                    </List>
                 </View>
             </View>
         )
@@ -132,8 +156,7 @@ const styles = StyleSheet.create({
     searchBar:{
         flex:1,
     },
-    searchResult:{
-        flex:12,
-        backgroundColor:'yellow',
-    }
+    contacts: {
+       flex: 12,
+    },
 });

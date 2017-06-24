@@ -406,6 +406,64 @@ io.on('connection', function(socket){
 				if(results){
 					// Insert works then sent back ack
 					socket.emit('friendRequestAck', true);
+
+					// here generate token
+					var token = jwt.sign(msg.user_two_id, 'fernesyucompare');
+					console.log(token);
+					// then check if the user exist in the loginsession already
+					connection.query('SELECT * FROM loginSession WHERE token=?',
+					[token],
+					function(error,results,fields){
+						if(error){
+							console.log(error);
+						}
+						
+						if(results!=''){
+							// if the user is connected
+							var callbackData = JSON.parse(JSON.stringify(results));
+							var socketId = callbackData[0].socketId;
+
+							var requestSentFriendsList = [];
+							// broadcast to the user_two (who will receive the request);
+							connection.query('SELECT * FROM relationship WHERE (user_two_id =? ) AND status = 0',
+							[msg.user_two_id],
+							function(error,results,fields){
+								
+								if(error){
+									console.log(error);
+								}
+
+								if(results!=''){
+									var callbackData = JSON.parse(JSON.stringify(results));
+									console.log(callbackData);
+									//process the callback data, msg here is the logged in user
+									for(i=0; i < callbackData.length; i++){
+
+										console.log(callbackData[i]);
+									
+										var friendInfo = {
+											friendId : callbackData[i].action_user_id
+										}
+										
+										requestSentFriendsList.push(friendInfo);
+
+									}
+
+									console.log(requestSentFriendsList);
+									connectedClients[socketId].emit('requestSentFriendsListAck',requestSentFriendsList);
+								}else{
+									//no friends yet
+									console.log(requestSentFriendsList);
+									connectedClients[socketId].emit('requestSentFriendsListAck',requestSentFriendsList);
+								}
+							}); // close tag for sql function
+
+						}else{
+							// not connected 
+						}
+					});
+					
+
 					console.log(results);
 				}
 			});
@@ -422,11 +480,11 @@ io.on('connection', function(socket){
 		var decoded;
 		// verify token first
 		try {
-		  decoded = jwt.verify(msg, 'fernesyucompare');
-		  console.log(decoded);
+		  	decoded = jwt.verify(msg, 'fernesyucompare');
+		  	console.log(decoded);
 		} catch(err) {
-		  console.log(err);
-		  return;
+		  	console.log(err);
+		  	return;
 		}
 
 		connection.query('SELECT * FROM relationship WHERE (user_one_id = ? or user_two_id =? ) AND status = 1',
@@ -468,6 +526,51 @@ io.on('connection', function(socket){
 				socket.emit('friendListAck',friendList);
 			}
 		});
+	});
+
+	socket.on('requestSentFriendsList',function(msg){
+		var requestSentFriendsList = [];
+		var decoded;
+
+		try {
+			
+			decoded = jwt.verify(msg, 'fernesyucompare');
+
+			connection.query('SELECT * FROM relationship WHERE (user_two_id =? ) AND status = 0',
+			[decoded],
+			function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					console.log(callbackData);
+					//process the callback data, msg here is the logged in user
+					for(i=0; i < callbackData.length; i++){
+
+						console.log(callbackData[i]);
+					
+						var friendInfo = {
+							friendId : callbackData[i].action_user_id
+						}
+						
+						requestSentFriendsList.push(friendInfo);
+
+					}
+
+					console.log(requestSentFriendsList);
+					socket.emit('requestSentFriendsListAck',requestSentFriendsList);
+				}else{
+					//no friends yet
+					console.log(requestSentFriendsList);
+					socket.emit('requestSentFriendsListAck',requestSentFriendsList);
+				}
+			}); // close tag for sql function
+
+		} catch(err) {
+			console.log(err);
+		}
 	});
 
 	socket.on('profilePicsRequest', function(msg){
