@@ -425,9 +425,10 @@ io.on('connection', function(socket){
 					}else{
 						console.log('found it here');
 
-						var friendsInfo = {
+						var friendInfo = {
 							friendId : callbackData[i].user_one_id
 						}
+						
 						friendList.push(friendInfo);
 					}
 				}
