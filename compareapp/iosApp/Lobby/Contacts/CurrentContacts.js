@@ -28,30 +28,30 @@ const {width, height} = Dimensions.get('window')
 import FriendsProfile from './FriendsProfile'
 
 export default class CurrentContactsPage extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      userId: "",
-      text:'',
-      friendsList: [],
-      token: this.props.token
-    }
+    constructor(props){
+        super(props);
+        this.state = {
+            userId: "",
+            text:'',
+            friendsList: [],
+            token: this.props.token
+        }
 
-    this.socket = this.props.socket;
+        this.socket = this.props.socket;
     //emit socket info to query friends list
     // hardcoded current user identity UserId: william-ysy (in database)
-    
-  }
 
-  componentDidMount() {
-    this.socket.emit('friendList',this.state.token);
-    // alert(this.state.token);
-    
-    this.socket.on('friendListAck',function(msg){
-      this.setState({friendsList:msg});
-      // alert(this.state.friendsList);
-    }.bind(this));
-  };
+    };
+
+    componentDidMount() {
+        this.socket.emit('friendList',this.state.token);
+        // alert(this.state.token);
+
+        this.socket.on('friendListAck',function(msg){
+            this.setState({friendsList:msg});
+          // alert(this.state.friendsList);
+        }.bind(this));
+    };
 
 
 

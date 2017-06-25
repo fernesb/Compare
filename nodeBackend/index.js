@@ -529,6 +529,43 @@ io.on('connection', function(socket){
 		});
 	});
 
+	socket.on('groupCompareList',function(msg){
+		var decoded;
+		var groupCompareList = [];
+		try {
+
+			decoded = jwt.verify(msg,'fernesyucompare');
+
+			connection.query('SELECT * from user_group, groupInfo WHERE (user_group.user_id = ? AND user_group.group_id = groupInfo.id)',
+			[decoded],
+			function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					console.log(results);
+					for( i=0; i < callbackData.length; i++ ){
+						var groupCompareInfo = {
+							groupCompareId : callbackData[i].group_id,
+							groupCompareName: callbackData[i].name
+						}
+
+						groupCompareList.push(groupCompareInfo);
+					}
+					console.log(groupCompareList);
+					socket.emit('groupCompareListAck',groupCompareList);
+				}else{
+					console.log(groupCompareList);
+					socket.emit('groupCompareListAck',groupCompareList);
+				}
+			});
+		} catch (err) {
+			console.log(err);
+		}
+	});
+
 	socket.on('requestSentFriendsList',function(msg){
 		var requestSentFriendsList = [];
 		var decoded;
@@ -690,6 +727,11 @@ io.on('connection', function(socket){
 		});
 
 	});
+
+	socket.on('groupChatMessage',function(msg){
+
+	});
+
 
 	socket.on('acceptRequest',function(msg){
 		var decoded;

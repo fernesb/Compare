@@ -8,90 +8,118 @@ import {
     TouchableHighlight, 
     Button, 
     TextInput,
-    SegmentedControlIOS
+    SegmentedControlIOS,
+    ListView,
+    FlatList,
+    Dimensions,
+    TouchableWithoutFeedback,
+    ScrollView
 } from 'react-native';
+
+import IO from 'socket.io-client/dist/socket.io.js';
 import { GiftedChat } from 'react-native-gifted-chat';
+import Search from 'react-native-search-box';
+import Icon from 'react-native-vector-icons/FontAwesome';
+import {List, ListItem} from 'react-native-elements';
+
+const {width, height} = Dimensions.get('window');
 
 export default class GroupComparePage extends React.Component{
-	constructor(props) {
-    super(props);
-    this.state = {
-      messages: [],
-      token: this.props.token
+    constructor(props) {
+        super(props);
+        this.state = {
+            groupCompareList: [],
+            token: this.props.token
+        };
+        this.socket = this.props.socket;
     };
 
-    this.onSend = this.onSend.bind(this);
-    this.socket = this.props.socket;
-    this.socket.on('chatMessage', function(msg){
-      this.onReceivedMessage(msg);
-    }.bind(this));
-  }
+    componentDidMount() {
+        
+        this.socket.emit('groupCompareList',this.state.token);
+        // alert(this.state.token);
 
-  componentWillMount() {
-    this.setState({
-      messages: [
-        {
-          _id: 1,
-          text: 'Hello developer',
-          createdAt: new Date(Date.UTC(2016, 7, 30, 17, 20, 0)),
-          user: {
-            _id: 2,
-            name: 'React Native',
-            avatar: 'https://facebook.github.io/react/img/logo_og.png',
-          },
-        },
-      ],
-    });
-  };
+        this.socket.on('groupCompareListAck',function(msg){
+        this.setState({groupCompareList:msg});
+        // alert(this.state.friendsList);
+        }.bind(this));
+    };
 
-  onSend(messages = []) {
-    this.socket.emit('chatMessage', messages[0]);
-    this._storeMessages(messages);
-  };
 
-  onReceivedMessage(messages){
-    this._storeMessages(messages);
-  }
+    userPageNavigate(object){
+        const {navigate} = this.props.navigate;
+        navigate('GroupCompareChat',{ 
+            socket: this.socket,
+            groupCompareInfo: object,
+            token: this.state.token });
+    }
 
-  //helper function
-  _storeMessages(messages){
-    this.setState((previousState) => {
-      return {
-        messages: GiftedChat.append(previousState.messages, messages),
-      };
-    });
-  };
+    render() {
+        return (
+            <ScrollView style={{flex: 1}}>  
+                <View style={styles.searchBar}>
+                    <Search
+                        onSearch = {this.onSearch}
+                        onChangeText = {this.onChangeText}/>
+                </View>
 
-  render() {
-    return (
-      <GiftedChat
-        messages={this.state.messages}
-        onSend={this.onSend}
-        user={{
-          _id: this.state.token,
-          avatar: 'https://facebook.github.io/react/img/logo_og.png'
-        }} />
-    );
-  }
+                <View style={styles.contacts}>
+                    <List containerStyle={{marginBottom: 20}}>
+                        {
+                            this.state.groupCompareList.map((l, i) => (
+                                <ListItem
+                                    roundAvatar
+                                    key={i}
+                                    avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
+                                    title={l.groupCompareName}
+                                    button onPress={()=>{this.userPageNavigate(l)}}/>
+                            ))
+                        }
+                    </List>
+                </View>
+            </ScrollView>
+        );
+    }
+
 }
 
-
-const styles = StyleSheet.create ({
-   container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent:'center',
-      paddingTop: 23
-   },
-   input: {
-      margin: 15,
-      height: 40,
-      width: 200,
-      borderColor: 'grey',
-      borderWidth: 1
-   },
-   submit: {
-      backgroundColor: 'silver',
-      padding: 10
-   }
-})
+const styles = StyleSheet.create({
+  searchBar: {
+    flex: 1,
+  },
+  input: {
+    width: width - (width / 4),
+    height: 30,
+    backgroundColor: '#323232',
+    marginHorizontal: 10,
+    paddingLeft: 30,
+    borderRadius: 3,
+    color: 'grey'
+  },
+  searchIcon: {
+    position: 'absolute',
+    top: 5,
+    left: 15,
+    zIndex: 1,
+    backgroundColor:'transparent'
+  },
+  iconInputClose: {
+        position: 'absolute',
+        top: 5,
+        right: 90,
+        backgroundColor: 'transparent',
+        zIndex: 1
+    },
+  cancelButtonText: {
+      color: 'white'
+  },
+  contacts: {
+   flex: 12,
+  },
+  item: {
+    padding: 10,
+    fontSize: 18,
+    height: 44,
+  },
+});
+  

@@ -26,7 +26,10 @@ import SignUpFour from './iosApp/Registration/SignUpFour';
 import RegisterComponent from './iosApp/Registration/Register';
 import SettingPage from './iosApp/Lobby/Settings/SettingPage';
 import ProfilePicPage from './iosApp/Lobby/ProfilePic/ProfilePicPage';
+
 import GroupComparePage from './iosApp/Lobby/GroupCompare/GroupComparePage';
+import GroupCompareChat from './iosApp/Lobby/GroupCompare/GroupCompareChat';
+
 import ContactsPage from './iosApp/Lobby/Contacts/ContactsPage';
 import Lobby from './iosApp/Lobby/lobby';
 import TestLobby from './iosApp/Lobby/testLobby';
@@ -268,7 +271,8 @@ const SimpleApp = StackNavigator({
     FriendsProfileScreen: { screen: FriendsProfilePage },
     NewFriendsSearchPage: { screen: NewFriendsSearchPage },
     FriendRequestSenderInfo : {screen: FriendRequestSenderInfo },
-    FriendsChat : {screen: FriendsChat}
+    FriendsChat : {screen: FriendsChat},
+    GroupCompareChat : {screen: GroupCompareChat}
 });
 
 

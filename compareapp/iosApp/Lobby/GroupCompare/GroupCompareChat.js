@@ -12,30 +12,29 @@ import {
 } from 'react-native';
 import { GiftedChat } from 'react-native-gifted-chat';
 
+export default class GroupCompareChat extends React.Component {
 
-export default class FriendsChat extends React.Component{
-	
 	constructor(props) {
 	    super(props);
 	    this.state = {
 	      	messages: [],
 	     	token: this.props.navigation.state.params.token,
-	     	friendId: this.props.navigation.state.params.friendId,
+	     	groupCompareInfo: this.props.navigation.state.params.groupCompareInfo,
 	    };
 
 	    this.onSend = this.onSend.bind(this);
 	    this.socket = this.props.navigation.state.params.socket;
 	    
 	    // dynamcially create event name
-	    var eventName = this.state.friendId+this.state.token;
-	    this.socket.on(eventName, function(msg){
-	      	this.onReceivedMessage(msg);
-	    }.bind(this));
+	    // var eventName = this.state.friendId+this.state.token;
+	    // this.socket.on(eventName, function(msg){
+	    //   	this.onReceivedMessage(msg);
+	    // }.bind(this));
 
   	};
 
   	static navigationOptions = ({ navigation }) => ({
-	    title: `${navigation.state.params.friendId}` ,
+	    title: `${navigation.state.params.groupCompareInfo.groupCompareName}` ,
 	});
 
 	componentWillMount() {
@@ -90,8 +89,7 @@ export default class FriendsChat extends React.Component{
 				}} />
 		);
 	};
-};
-
+}
 
 const styles = StyleSheet.create ({
    container: {
