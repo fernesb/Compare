@@ -672,7 +672,7 @@ io.on('connection', function(socket){
 
 		var friendToken =  jwt.sign(msg.friendId,'fernesyucompare' );
 		var decoded = jwt.verify(msg.token,'fernesyucompare');
-		
+		// 是相反的
 		var eventName = decoded+friendToken;
 
 		connection.query('SELECT * FROM loginsession WHERE token = ?',
