@@ -36,17 +36,18 @@ export default class CurrentContactsPage extends React.Component{
       friendsList: [],
       token: this.props.token
     }
-    // this.socket = IO('http://localhost:3000'); 
+
+    this.socket = this.props.socket;
     //emit socket info to query friends list
     // hardcoded current user identity UserId: william-ysy (in database)
     
   }
 
   componentDidMount() {
-    this.props.socket.emit('friendList',this.state.token);
+    this.socket.emit('friendList',this.state.token);
     // alert(this.state.token);
     
-    this.props.socket.on('friendListAck',function(msg){
+    this.socket.on('friendListAck',function(msg){
       this.setState({friendsList:msg});
       // alert(this.state.friendsList);
     }.bind(this));
@@ -55,44 +56,56 @@ export default class CurrentContactsPage extends React.Component{
 
 
   //search the existing users
-  searchUser(){
-    var searchObject = {
-      userName: this.state.userId
-    };
+  // searchUser(){
+  //   var searchObject = {
+  //     userName: this.state.userId
+  //   };
 
-    this.props.socket.emit('searchContacts',searchObject);
-    // logic handling data sent back from the backend 
-    this.props.socket.on('searchStatus', function(msg){
-      if(msg.status == true){
-        console.warn(msg.content[0].id);
-      }else{
-        console.warn(msg.msg);
-      }
-    });
-  }
+  //   this.props.socket.emit('searchContacts',searchObject);
+  //   // logic handling data sent back from the backend 
+  //   this.props.socket.on('searchStatus', function(msg){
+  //     if(msg.status == true){
+  //       console.warn(msg.content[0].id);
+  //     }else{
+  //       console.warn(msg.msg);
+  //     }
+  //   });
+  // }
 
-  onSearch=()=>{
-    // event handler for executing search
-    return new Promise((resolve,reject) =>{
+  // onSearch=()=>{
+  //   // event handler for executing search
+  //   return new Promise((resolve,reject) =>{
       
-      resolve(
-        this.searchUser()
-      );
-    });    
+  //     resolve(
+  //       this.searchUser()
+  //     );
+  //   });    
     
-  }
+  // }
 
-  onChangeText = (text) => {
-    this.setState({userId:text});
-  }
+  // onChangeText = (text) => {
+  //   this.setState({userId:text});
+  // }
 
+  // userPageNavigate(friendId){
+  //   const {navigate} = this.props.navigate;
+  //   const socketParam = this.props.socket;
+  //   navigate('FriendsProfileScreen',
+  //     { 
+  //       socket: socketParam,
+  //       friendId: friendId
+  //     }
+  //   );
+  // }
+
+  // navigate to individual chat
   userPageNavigate(friendId){
     const {navigate} = this.props.navigate;
-    const socketParam = this.props.socket;
-    navigate('FriendsProfileScreen',
+    navigate('FriendsChat',
       { 
-        socket: socketParam,
-        friendId: friendId
+        socket: this.socket,
+        friendId: friendId,
+        token: this.state.token
       }
     );
   }

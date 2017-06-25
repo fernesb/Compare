@@ -460,6 +460,7 @@ io.on('connection', function(socket){
 
 						}else{
 							// not connected 
+							console.log('This user is not connected');
 						}
 					});
 					
@@ -631,6 +632,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('vote',function(msg){
+
 		connection.query('SELECT id FROM voteStatus WHERE user_one_id =? AND user_two_id =?',
 		[msg.user_one_id,msg.user_two_id],
 		function(error,results,fields){
@@ -639,6 +641,7 @@ io.on('connection', function(socket){
 			}
 			console.log('found row')
 			var callbackData = JSON.parse(JSON.stringify(results));
+
 			connection.query('UPDATE voteStatus SET status=? WHERE id =?',[1, callbackData[0].id],function(error,results,fields){
 				if(error){
 					console.log(error);
@@ -662,6 +665,54 @@ io.on('connection', function(socket){
 
 	socket.on('chatMessage',function(msg){
 		socket.broadcast.emit('chatMessage', msg);
+	});
+
+
+	socket.on('individualChatMessage',function(msg){
+
+		var friendToken =  jwt.sign(msg.friendId,'fernesyucompare' );
+		var decoded = jwt.verify(msg.token,'fernesyucompare');
+		
+		var eventName = decoded+friendToken;
+
+		connection.query('SELECT * FROM loginsession WHERE token = ?',
+		[friendToken],
+		function(error,results,field){
+			if(error){
+				console.log(error);
+			}else{
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					var socketId = callbackData[0].socketId;
+					connectedClients[socketId].emit(eventName, msg.message);
+				}
+			}
+		});
+
+	});
+
+	socket.on('acceptRequest',function(msg){
+		var decoded;
+
+		try{
+			decoded = jwt.verify(msg.token, 'fernesyucompare');
+			// update relationship
+			connection.query('UPDATE relationship SET status=? WHERE action_user_id = ? AND user_two_id =?',
+			[1, msg.friendId, decoded],
+			function(error,fields,results){
+				if(error){
+					console.log(error);
+				}else{
+					socket.emit('acceptRequestAck',true);
+					// also real-time update my own contacts list
+					// if the other user is connected to server, give real-time update
+					// modify later
+				}
+
+			});
+		} catch(err) {
+
+		}
 	});
 
 });

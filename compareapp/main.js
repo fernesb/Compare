@@ -33,7 +33,8 @@ import TestLobby from './iosApp/Lobby/testLobby';
 
 import FriendsProfilePage from './iosApp/Lobby/Contacts/FriendsProfile';
 import NewFriendsSearchPage from './iosApp/Lobby/Contacts/NewFriendsSearchPage';
-
+import FriendRequestSenderInfo from './iosApp/Lobby/Contacts/FriendRequestSenderInfo';
+import FriendsChat from './iosApp/Lobby/Contacts/FriendsChat';
 // test out for segment control element
 class HomeScreen extends Component {
     constructor(props){
@@ -265,8 +266,9 @@ const SimpleApp = StackNavigator({
     // MainScreen : {screen: TestLobby},
     MainScreen: { screen: Lobby },
     FriendsProfileScreen: { screen: FriendsProfilePage },
-    NewFriendsSearchPage: { screen: NewFriendsSearchPage }
-
+    NewFriendsSearchPage: { screen: NewFriendsSearchPage },
+    FriendRequestSenderInfo : {screen: FriendRequestSenderInfo },
+    FriendsChat : {screen: FriendsChat}
 });
 
 

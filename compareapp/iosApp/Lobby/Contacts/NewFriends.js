@@ -36,6 +36,7 @@ export default class NewFriends extends React.Component{
             requestSentFriendsList: [],
         }
         this.socket = this.props.socket;
+
         this.props.socket.emit('requestSentFriendsList',this.state.token);
         
         // keep real-time updating the request sent list
@@ -107,22 +108,19 @@ export default class NewFriends extends React.Component{
         });
     }
 
-    // user_two_id is the userId of the friend being searched
-    addSubview(){
-        if(this.state.searchStatus == false){
-            return (<Text>Sir</Text>)
-        }else{
-            return (
-                <NewFriendsSearchResult
-                    userName ={this.state.friendUserName} 
-                    email = {this.state.friendEmail}
-                    user_two_id = {this.state.user_two_id}
-                    socket = {this.socket}
-                    token ={this.state.token} />
-            )
-        }
-    }
 
+    // navigator for each cell
+    userPageNavigate(id){
+        const {navigate} = this.props.navigate;
+
+        navigate('FriendRequestSenderInfo',{ 
+            socket: this.socket,
+            token: this.state.token,
+            friendId: id
+        });
+
+    }
+   
     render(){
         return (
             <View style={{flex:1}}>
