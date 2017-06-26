@@ -729,6 +729,46 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('groupChatMessage',function(msg){
+		// check token
+		var decoded;
+		var groupClients = [];
+
+		try {
+			decoded = jwt.verify(msg.token,'fernesyucompare');
+
+			//get groupid 
+			var groupId = msg.groupId;
+			console.log(groupId);
+			// get all the users who have this groupId
+			connection.query('SELECT loginSession.socketId from user_group, loginSession WHERE (user_group.group_id = ? AND user_group.user_id = loginSession.userId)',
+			[groupId],
+			function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					console.log(callbackData);
+
+					// create an array for sockets in the same group
+					for( i = 0; i < callbackData.length; i++ ){
+						groupClients.push( callbackData[i].socketId );
+					}
+
+					for( i = 0; i < groupClients.length; i++ ){
+						connectedClients[ groupClients[i] ].emit(groupId, msg.message);
+					}
+
+					console.log(groupClients);
+				}else{
+					console.log('no data here');
+				}
+
+			});
+		} catch(err) {
+			console.log(err);
+		}
 
 	});
 

@@ -20,16 +20,17 @@ export default class GroupCompareChat extends React.Component {
 	      	messages: [],
 	     	token: this.props.navigation.state.params.token,
 	     	groupCompareInfo: this.props.navigation.state.params.groupCompareInfo,
+	     	groupCompareId: this.props.navigation.state.params.groupCompareInfo.groupCompareId
 	    };
 
 	    this.onSend = this.onSend.bind(this);
 	    this.socket = this.props.navigation.state.params.socket;
 	    
-	    // dynamcially create event name
-	    // var eventName = this.state.friendId+this.state.token;
-	    // this.socket.on(eventName, function(msg){
-	    //   	this.onReceivedMessage(msg);
-	    // }.bind(this));
+	    //dynamcially create event name
+	    var eventName = this.state.groupCompareId
+	    this.socket.on(eventName, function(msg){
+	      	this.onReceivedMessage(msg);
+	    }.bind(this));
 
   	};
 
@@ -58,10 +59,10 @@ export default class GroupCompareChat extends React.Component {
 		var object = {
 			message: messages[0],
 	    	token: this.state.token,
-	    	friendId: this.state.friendId
+	    	groupId: this.state.groupCompareId
 	    };
 	    
-		this.socket.emit('individualChatMessage', object);
+		this.socket.emit('groupChatMessage', object);
 		this._storeMessages(messages);
 	};
 
