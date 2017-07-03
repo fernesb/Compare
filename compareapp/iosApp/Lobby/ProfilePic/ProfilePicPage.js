@@ -9,72 +9,116 @@ import {
     Button, 
     TextInput,
     SegmentedControlIOS,
-    Image
+    Dimensions,
+    Image,
+    TouchableWithoutFeedback,
+    ScrollView
 } from 'react-native';
 
 import CurrentPic from './PictureComponents/CurrentPic'
+const {width, height} = Dimensions.get('window');
+import {List, ListItem} from 'react-native-elements';
 
 export default class ProfilePicPage extends React.Component{
-    render(){
+    constructor(props){
+        super(props);
+        this.state = {
+            userId: "",
+            text:'',
+            storiesList: [],
+            token: this.props.token
+        }
+
+        this.socket = this.props.socket;
+
+    };
+
+    componentDidMount() {
+        this.socket.emit('storiesList',this.state.token);
+        // alert(this.state.token);
+
+        this.socket.on('storiesListAck',function(msg){
+            this.setState({storiesList:msg});
+          // alert(this.state.friendsList);
+        }.bind(this));
+    };
+
+    userPageNavigate(object){
+        const {navigate} = this.props.navigate;
+        navigate('StoryContent',{ 
+            socket: this.socket,
+            storiesInfo: object,
+            token: this.state.token });
+    };
+
+
+    render() {
         return (
-            <View style = {styles.parentBox}>
-                <View style = {styles.CurrentPicBox}>
-                    <CurrentPic />
+            <ScrollView style={{flex: 1}}>  
+
+                <View style={styles.contacts}>
+                  <List containerStyle={{marginBottom: 20}}>
+                    {
+                      this.state.storiesList.map((l, i) => (
+                          <ListItem
+                            roundAvatar
+                            key={i}
+                            avatar={{uri: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg'}}
+                            title={l.post_by}
+                            subtitle={l.storyName}
+                            button onPress={()=>{this.userPageNavigate(l)}}/>
+                      ))
+                    }
+                  </List>
                 </View>
 
-                <View style = {styles.uploadedPicBox}>
-                    <View style = {styles.individualPicBox}>
-                        <Image 
-                            style = {{width: '100%', height: '100%'}}
-                            source = {require('./TestPics/audiA8.jpg') } />
-                    </View>
-
-                    <View style = {styles.individualPicBox}>
-                        <Image 
-                            style = {{width: '100%', height: '100%'}}
-                            source = {require('./TestPics/bmw5.jpg') } />
-                    </View>
-
-                    <View style = {styles.individualPicBox}>
-                        <Image 
-                            style = {{width: '100%', height: '100%'}}
-                            source = {require('./TestPics/lexus500c.jpg') } />
-                    </View>
-                </View>
-            </View>
-        )
+            </ScrollView>
+        );
     }
-}
+};
 
 const styles = StyleSheet.create({
-    parentBox: {
-        flex:1,
-        backgroundColor:'#7BD1ED',
-        alignItems:'center'
+    searchBar: {
+        flex: 1,
+    },
+    
+    input: {
+        width: width - (width / 4),
+        height: 30,
+        backgroundColor: '#323232',
+        marginHorizontal: 10,
+        paddingLeft: 30,
+        borderRadius: 3,
+        color: 'grey'
     },
 
-    CurrentPicBox: {
-        marginTop: '15%',
-        width: '60%',
-        height: '40%',
-        backgroundColor: '#E1AEF2'
+    searchIcon: {
+        position: 'absolute',
+        top: 5,
+        left: 15,
+        zIndex: 1,
+        backgroundColor:'transparent'
     },
 
-    uploadedPicBox: {
-        flexDirection: 'row',
-        width: '90%',
-        height: '30%',
-        marginTop: '10%',
-        backgroundColor: '#AEF2E2',
-        alignItems:'center',
-        justifyContent: 'center'
+    iconInputClose: {
+        position: 'absolute',
+        top: 5,
+        right: 90,
+        backgroundColor: 'transparent',
+        zIndex: 1
     },
 
-    individualPicBox: {
-        width: 85,
-        height: 85,
-        margin: '2%',
-        backgroundColor: '#F2E4AE'
-    }
+    cancelButtonText: {
+        color: 'white'
+    },
+    
+    contacts: {
+        flex: 12,
+    },
+    
+    item: {
+        padding: 10,
+        fontSize: 18,
+        height: 44,
+    },
 });
-

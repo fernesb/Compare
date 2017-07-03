@@ -23,7 +23,7 @@ import Search from 'react-native-search-box';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {List, ListItem} from 'react-native-elements';
 
-const {width, height} = Dimensions.get('window')
+const {width, height} = Dimensions.get('window');
 
 import FriendsProfile from './FriendsProfile'
 

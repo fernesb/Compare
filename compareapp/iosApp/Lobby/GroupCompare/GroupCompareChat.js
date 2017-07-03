@@ -20,7 +20,8 @@ export default class GroupCompareChat extends React.Component {
 	      	messages: [],
 	     	token: this.props.navigation.state.params.token,
 	     	groupCompareInfo: this.props.navigation.state.params.groupCompareInfo,
-	     	groupCompareId: this.props.navigation.state.params.groupCompareInfo.groupCompareId
+	     	groupCompareId: this.props.navigation.state.params.groupCompareInfo.groupCompareId,
+	     	url: 'https://facebook.github.io/react/img/logo_og.png'
 	    };
 
 	    this.onSend = this.onSend.bind(this);
@@ -39,6 +40,17 @@ export default class GroupCompareChat extends React.Component {
 	});
 
 	componentWillMount() {
+		var seed = 0;
+        var name = this.state.token;
+
+        for( var j = 0; j < name.length; j++ )
+            seed += ( name.charCodeAt(j) * j * 37 );
+        seed = seed.toString( 16 );
+        var hash = '327b8763d4f0039dab25572ee873caaa';
+        hash = hash.substring( 0, hash.length - seed.length ) + seed;
+        var theurl = 'http://www.gravatar.com/avatar/' + hash + '?s=30&d=monsterid&r=PG';
+
+
 		this.setState({
 			messages: [
 				{
@@ -52,6 +64,8 @@ export default class GroupCompareChat extends React.Component {
 				    },
 				},
 			],
+
+			url: theurl,
 		});
 	};
 
@@ -86,7 +100,7 @@ export default class GroupCompareChat extends React.Component {
 				onSend={this.onSend}
 				user={{
 				  _id: this.state.token,
-				  avatar: 'https://facebook.github.io/react/img/logo_og.png'
+				  avatar: this.state.url
 				}} />
 		);
 	};

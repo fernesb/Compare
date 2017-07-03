@@ -482,7 +482,7 @@ io.on('connection', function(socket){
 		// verify token first
 		try {
 		  	decoded = jwt.verify(msg, 'fernesyucompare');
-		  	console.log(decoded);
+		  	// console.log(decoded);
 		} catch(err) {
 		  	console.log(err);
 		  	return;
@@ -497,19 +497,19 @@ io.on('connection', function(socket){
 
 			if(results!=''){
 				var callbackData = JSON.parse(JSON.stringify(results));
-				console.log(callbackData);
+				// console.log(callbackData);
 				//process the callback data, msg here is the logged in user
 				for(i=0; i < callbackData.length; i++){
 
-					console.log(callbackData[i]);
+					// console.log(callbackData[i]);
 					if(callbackData[i].user_one_id == decoded){
-						console.log('found it');
+						// console.log('found it');
 						var friendInfo = {
 							friendId : callbackData[i].user_two_id
 						}
 						friendList.push(friendInfo);
 					}else{
-						console.log('found it here');
+						// console.log('found it here');
 
 						var friendInfo = {
 							friendId : callbackData[i].user_one_id
@@ -519,11 +519,11 @@ io.on('connection', function(socket){
 					}
 				}
 
-				console.log(friendList);
+				// console.log(friendList);
 				socket.emit('friendListAck',friendList);
 			}else{
 				//no friends yet
-				console.log(friendList);
+				// console.log(friendList);
 				socket.emit('friendListAck',friendList);
 			}
 		});
@@ -545,7 +545,7 @@ io.on('connection', function(socket){
 
 				if(results!=''){
 					var callbackData = JSON.parse(JSON.stringify(results));
-					console.log(results);
+					// console.log(results);
 					for( i=0; i < callbackData.length; i++ ){
 						var groupCompareInfo = {
 							groupCompareId : callbackData[i].group_id,
@@ -554,10 +554,10 @@ io.on('connection', function(socket){
 
 						groupCompareList.push(groupCompareInfo);
 					}
-					console.log(groupCompareList);
+					// console.log(groupCompareList);
 					socket.emit('groupCompareListAck',groupCompareList);
 				}else{
-					console.log(groupCompareList);
+					// console.log(groupCompareList);
 					socket.emit('groupCompareListAck',groupCompareList);
 				}
 			});
@@ -583,11 +583,11 @@ io.on('connection', function(socket){
 
 				if(results!=''){
 					var callbackData = JSON.parse(JSON.stringify(results));
-					console.log(callbackData);
+					// console.log(callbackData);
 					//process the callback data, msg here is the logged in user
 					for(i=0; i < callbackData.length; i++){
 
-						console.log(callbackData[i]);
+						// console.log(callbackData[i]);
 					
 						var friendInfo = {
 							friendId : callbackData[i].action_user_id
@@ -597,11 +597,11 @@ io.on('connection', function(socket){
 
 					}
 
-					console.log(requestSentFriendsList);
+					// console.log(requestSentFriendsList);
 					socket.emit('requestSentFriendsListAck',requestSentFriendsList);
 				}else{
 					//no friends yet
-					console.log(requestSentFriendsList);
+					// console.log(requestSentFriendsList);
 					socket.emit('requestSentFriendsListAck',requestSentFriendsList);
 				}
 			}); // close tag for sql function
@@ -622,7 +622,7 @@ io.on('connection', function(socket){
 			if(results!=''){
 				var callbackData = JSON.parse(JSON.stringify(results));
 				socket.emit('profilePicsRequestAck', callbackData);
-				console.log(callbackData);
+				// console.log(callbackData);
 			}else{
 				console.log('no posts yet');
 			}
@@ -630,7 +630,7 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('voteStatus',function(msg){
-		console.log(msg);
+		// console.log(msg);
 		connection.query('SELECT status FROM voteStatus WHERE user_one_id =? AND user_two_id =?',
 		[msg.user_one_id,msg.user_two_id],
 		function(error,results,fields){
@@ -638,7 +638,7 @@ io.on('connection', function(socket){
 				console.log(error);
 			}
 
-			console.log(results);
+			// console.log(results);
 			// check if exists a cell between the two users
 			// false means not voted yet
 			if(results==''){
@@ -651,17 +651,17 @@ io.on('connection', function(socket){
 					}
 
 					if(results!=''){
-						console.log('created entry successfully');
+						// console.log('created entry successfully');
 					}
 				});
 			}else{
 				var callbackData = JSON.parse(JSON.stringify(results));
 				console.log(callbackData);
 				if(callbackData[0].status == 1){
-					console.log('status is 1');
+					// console.log('status is 1');
 					socket.emit('voteStatusAck',true);
 				}else{
-					console.log('status is 0');
+					// console.log('status is 0');
 					socket.emit('voteStatusAck',false);
 				}	
 			}
@@ -669,35 +669,23 @@ io.on('connection', function(socket){
 	});
 
 	socket.on('vote',function(msg){
+		var decoded;
 
-		connection.query('SELECT id FROM voteStatus WHERE user_one_id =? AND user_two_id =?',
-		[msg.user_one_id,msg.user_two_id],
-		function(error,results,fields){
-			if(error){
-				console.log(error);
-			}
-			console.log('found row')
-			var callbackData = JSON.parse(JSON.stringify(results));
+		try {
+			decoded = jwt.verify(msg.token, 'fernesyucompare');
 
-			connection.query('UPDATE voteStatus SET status=? WHERE id =?',[1, callbackData[0].id],function(error,results,fields){
+			connection.query('UPDATE storyPost SET votes = votes+1 WHERE id =?',
+			[msg.postId],
+			function(error,results,fields){
 				if(error){
 					console.log(error);
 				}
 
-				//here increment the vote counts for that specific picture
-				connection.query('UPDATE profilePicPosts SET votes=votes+1 WHERE id=?',
-				[msg.photoId],
-				function(error,results,fields){
-					connection.query('SELECT * FROM profilePicPosts WHERE postBy=?',
-					[msg.user_two_id],function(error,results,fields){
-						var callbackData = JSON.parse(JSON.stringify(results));
-						socket.emit('voteAck', callbackData);
-					});
-					
-				});
-
 			});
-		});
+		} catch(err) {
+			console.log(err);
+		}
+		
 	});
 
 	socket.on('chatMessage',function(msg){
@@ -716,7 +704,7 @@ io.on('connection', function(socket){
 		[friendToken],
 		function(error,results,field){
 			if(error){
-				console.log(error);
+				// console.log(error);
 			}else{
 				if(results!=''){
 					var callbackData = JSON.parse(JSON.stringify(results));
@@ -749,7 +737,7 @@ io.on('connection', function(socket){
 
 				if(results!=''){
 					var callbackData = JSON.parse(JSON.stringify(results));
-					console.log(callbackData);
+					// console.log(callbackData);
 
 					// create an array for sockets in the same group
 					for( i = 0; i < callbackData.length; i++ ){
@@ -760,7 +748,7 @@ io.on('connection', function(socket){
 						connectedClients[ groupClients[i] ].emit(groupId, msg.message);
 					}
 
-					console.log(groupClients);
+					// console.log(groupClients);
 				}else{
 					console.log('no data here');
 				}
@@ -781,7 +769,7 @@ io.on('connection', function(socket){
 			// update relationship
 			connection.query('UPDATE relationship SET status=? WHERE action_user_id = ? AND user_two_id =?',
 			[1, msg.friendId, decoded],
-			function(error,fields,results){
+			function(error,results,fields){
 				if(error){
 					console.log(error);
 				}else{
@@ -794,6 +782,122 @@ io.on('connection', function(socket){
 			});
 		} catch(err) {
 
+		}
+	});
+
+	socket.on('storiesList',function(msg){
+		var storyList = [];
+		
+		try{
+			var decoded =  jwt.verify(msg,'fernesyucompare');
+
+			connection.query('SELECT storyDetails.name, storyDetails.id, storyDetails.post_by FROM storyDetails, relationship WHERE (relationship.user_one_id = ? and relationship.user_two_id = storyDetails.post_by and storyDetails.live = 1)',
+			[decoded],
+			function(error, results, fields ){
+
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					for( i=0; i<callbackData.length; i++ ){
+						var storiesList = {
+							storyId : callbackData[i].id,
+							storyName: callbackData[i].name,
+							post_by: callbackData[i].post_by
+						}
+
+						storyList.push(storiesList);
+
+					}
+
+					socket.emit('storiesListAck',storyList);
+				}else{
+					socket.emit('storiesListAck',storyList);
+				}
+				
+			
+			});
+
+		} catch(err) {
+
+		}
+	});
+
+	socket.on('momentsList',function(msg){
+		var momentsList = [];
+		// console.log(msg);
+		try {
+
+			var decoded = jwt.verify(msg.token, 'fernesyucompare');
+			connection.query('SELECT * FROM storyPost WHERE story_id = ? and current_set = 1',
+			[msg.storyId],
+			function(error, results, fields){
+				
+				if( error ) {
+					console.log(error);
+				}
+
+				if( results!= ''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					console.log(callbackData);
+					
+					for(i = 0; i < callbackData.length; i++){
+						var object = {
+							url: callbackData[i].url,
+							id: callbackData[i].id
+						}
+
+						momentsList.push(object);
+					}
+
+					socket.emit('momentsListAck', momentsList);
+				}else{
+					socket.emit('momentsListAck', momentsList);
+					console.log('No data');
+				}
+			});
+
+		} catch( error ){
+			console.log(error);
+		}
+	});
+
+	socket.on('currentMoments',function(msg){
+		var currentMoments = [];
+
+		try{
+			
+			var decoded = jwt.verify(msg, 'fernesyucompare' );
+			connection.query('SELECT storyPost.url, storyPost.votes FROM storyDetails, storyPost WHERE storyDetails.post_by = ? and storyDetails.live = 1 and storyDetails.id = storyPost.story_id and storyPost.current_set = 1',
+			[decoded],
+			function(error,results,fields){
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					// console.log(callbackData);
+					for(i = 0; i < callbackData.length; i++ ) {
+						var object = {
+							url: callbackData[i].url,
+							vote: callbackData[i].votes
+						}
+
+						currentMoments.push(object);
+
+					}
+					socket.emit('currentMomentsAck', currentMoments);
+				}else {
+					console.log('no current post');
+					socket.emit('currentMomentsAck', currentMoments);
+				}
+			});
+
+		} catch (err){
+			console.log(err);
 		}
 	});
 

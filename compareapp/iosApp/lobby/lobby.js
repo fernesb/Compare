@@ -17,6 +17,7 @@ import { TabViewAnimated, TabBar } from 'react-native-tab-view';
 import ContactsPage from './Contacts/ContactsPage';
 import GroupComparePage from './GroupCompare/GroupComparePage';
 import ProfilePicPage from './ProfilePic/ProfilePicPage';
+import Myself from './Myself/Myself';
 import SettingPage from './Settings/SettingPage';
 
 
@@ -28,7 +29,7 @@ export default class Lobby extends Component {
       token: this.props.navigation.state.params.token,
       index: 0,
       routes: [
-        { key: '1', title: 'Group Compare' },
+        { key: '1', title: 'Me' },
         { key: '2', title: 'Profile Pic' },
         { key: '3', title: 'Contacts'},
         { key: '4', title: 'Setting'}
@@ -87,12 +88,15 @@ export default class Lobby extends Component {
   _renderScene = ({ route }) => {
     switch (route.key) {
       case '1':
-        return <GroupComparePage 
+        return <Myself 
                 navigate = {this.props.navigation}
                 socket = {this.socket}
                 token = {this.state.token} />;
       case '2':
-        return <ProfilePicPage />;
+        return <ProfilePicPage 
+                navigate = {this.props.navigation}
+                socket = {this.socket}
+                token = {this.state.token} />;
       case '3':
         return <ContactsPage 
                   navigate = {this.props.navigation}
