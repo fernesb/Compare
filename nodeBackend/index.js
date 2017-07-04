@@ -870,7 +870,7 @@ io.on('connection', function(socket){
 		try{
 			
 			var decoded = jwt.verify(msg, 'fernesyucompare' );
-			connection.query('SELECT storyPost.url, storyPost.votes FROM storyDetails, storyPost WHERE storyDetails.post_by = ? and storyDetails.live = 1 and storyDetails.id = storyPost.story_id and storyPost.current_set = 1',
+			connection.query('SELECT storyPost.url, storyPost.votes, storyPost.story_id FROM storyDetails, storyPost WHERE storyDetails.post_by = ? and storyDetails.live = 1 and storyDetails.id = storyPost.story_id and storyPost.current_set = 1',
 			[decoded],
 			function(error,results,fields){
 				if(error){
@@ -880,6 +880,8 @@ io.on('connection', function(socket){
 				if(results!=''){
 					var callbackData = JSON.parse(JSON.stringify(results));
 					// console.log(callbackData);
+					var id = callbackData[0].story_id;
+
 					for(i = 0; i < callbackData.length; i++ ) {
 						var object = {
 							url: callbackData[i].url,
@@ -889,8 +891,17 @@ io.on('connection', function(socket){
 						currentMoments.push(object);
 
 					}
-					socket.emit('currentMomentsAck', currentMoments);
+					var object = {
+						storyId: id,
+						currentMomentsList: currentMoments
+					}
+
+					socket.emit('currentMomentsAck', object);
 				}else {
+					var object = {
+						storyId: '',
+						currentMomentsList: currentMoments
+					}
 					console.log('no current post');
 					socket.emit('currentMomentsAck', currentMoments);
 				}
@@ -899,6 +910,73 @@ io.on('connection', function(socket){
 		} catch (err){
 			console.log(err);
 		}
+	});
+
+	socket.on('postMoments',function(msg){
+		
+		
+		try {
+
+			var decoded;
+			
+
+			decoded = jwt.verify(msg.token, 'fernesyucompare');
+
+			// first get the winner of this post
+			connection.query('SELECT id FROM storyPost WHERE votes=(SELECT MAX(votes) FROM storyPost WHERE post_by = ?)',
+			[decoded],
+			function(error,results,fields){
+
+				if(error){
+					console.log(error);
+				}
+
+				if(results!=''){
+					var callbackData = JSON.parse(JSON.stringify(results));
+					// console.log(callbackData);
+					var winnerPostId = callbackData[0].id;
+
+					//set this winner vote count to be 0.
+
+
+					// make all other post current_set = 0 except the winner
+					
+					connection.query('UPDATE storyPost SET current_set = 0 WHERE story_id = ? and id != ?',
+					[msg.storyId, winnerPostId],
+					function(error, results, fields){
+						if(error){
+							console.log(error);
+						}
+
+						var posts = msg.urls;
+
+						for(i=0; i < posts.length; i++){
+							connection.query('INSERT INTO storyPost (url, votes, story_id, current_set ) VALUES (?, ?, ?, ?)',
+							[posts[i], 0, msg.storyId, 1],
+							function(error,results,fields){
+								if(error){
+									console.log(error);
+								}
+							});
+						}
+
+					});
+
+				}
+			});
+
+
+			
+
+			// now add these new posts,
+			// question is how to update multiple together,  
+			
+			
+
+		} catch(error) {
+			console.log(error);
+		}
+		
 	});
 
 });

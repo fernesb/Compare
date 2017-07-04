@@ -26,6 +26,11 @@ export default class Myself extends React.Component {
             currentMomentsList: [],
             token: this.props.token,
             refreshing: false,
+            postOne:'',
+            postTwo:'',
+            postThree:'',
+            postFour:'',
+            storyId:''
         }
 
         this.socket = this.props.socket;
@@ -35,7 +40,8 @@ export default class Myself extends React.Component {
         this.socket.emit('currentMoments',this.state.token);
 
         this.socket.on('currentMomentsAck',function(msg){
-            this.setState({currentMomentsList:msg});
+            this.setState({ currentMomentsList: msg.currentMomentsList,
+                            storyId: msg.storyId });
 
         }.bind(this));
     };
@@ -45,9 +51,44 @@ export default class Myself extends React.Component {
         this.socket.emit('currentMoments',this.state.token);
 
         this.socket.on('currentMomentsAck',function(msg){
-            this.setState({currentMomentsList:msg});
-            this.setState({refreshing:false});
+            this.setState({ currentMomentsList: msg.currentMomentsList ,
+                            refreshing:false,
+                            storyId: msg.storyId });
+            
         }.bind(this));
+    };
+
+    updatePostOne=(text)=>{
+        this.setState({postOne:text});
+    };
+
+    updatePostTwo=(text)=>{
+        this.setState({postTwo:text});
+    };
+
+    updatePostThree=(text)=>{
+        this.setState({postThree:text});
+    };
+
+    updatePostFour=(text)=>{
+        this.setState({postFour:text});
+    };
+
+    postMoments(){
+        var images = [];
+        images.push(this.state.postOne);
+        images.push(this.state.postTwo);
+        images.push(this.state.postThree);
+        images.push(this.state.postFour);
+
+        alert(images);
+        var object = {
+            token: this.state.token,
+            storyId: this.state.storyId,
+            urls: images
+        };
+
+        this.socket.emit('postMoments', object);
     };
 
     render(){
@@ -55,18 +96,18 @@ export default class Myself extends React.Component {
             <View style={styles.searchBar}>
                 <View >
                     <FormInput
-                        onChangeText={this.updateUserId}/>
+                        onChangeText={this.updatePostOne}/>
                     <FormInput
-                        onChangeText={this.updateUserId}/>
+                        onChangeText={this.updatePostTwo}/>
                     <FormInput
-                        onChangeText={this.updateUserId}/> 
+                        onChangeText={this.updatePostThree}/> 
                     <FormInput
-                        onChangeText={this.updateUserId}/>  
+                        onChangeText={this.updatePostFour}/>  
                     <Button 
                         icon={{ name: 'done' }}
-                        title="Post"
+                        title="Update"
                         buttonStyle={{ marginTop: 15, backgroundColor: 'purple' }}
-                        onPress={()=>{this.pressToLogin()}}/>
+                        onPress={()=>{this.postMoments()}}/>
                 </View>
 
                
