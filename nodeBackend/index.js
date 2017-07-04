@@ -938,7 +938,12 @@ io.on('connection', function(socket){
 
 					//set this winner vote count to be 0.
 
-
+					connection.query('UPDATE storyPost SET votes = 0 WHERE id = ?',
+					[winnerPostId],function(error,results, fields){
+						if(error){
+							console.log(error);
+						}
+					});
 					// make all other post current_set = 0 except the winner
 					
 					connection.query('UPDATE storyPost SET current_set = 0 WHERE story_id = ? and id != ?',
